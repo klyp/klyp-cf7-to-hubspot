@@ -13,7 +13,6 @@ defined('ABSPATH') || die('Wordpress is not installed properly.');
         <a href="?page=klyp-cf7-to-hubspot" class="nav-tab nav-tab-active">Settings</a>
     </h2>
 
-    <form method="post" action="<?= admin_url( 'options.php' ); ?>">
         <?php
             settings_fields(KlypCF7TOHusbspot);
             do_settings_sections(KlypCF7TOHusbspot);
@@ -38,6 +37,4 @@ defined('ABSPATH') || die('Wordpress is not installed properly.');
             </div>
         </section>
 
-        <?= submit_button(); ?>
-    </form>
 </div>

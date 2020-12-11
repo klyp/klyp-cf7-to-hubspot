@@ -74,7 +74,7 @@ class klypHubspot
             if ($this->cf7FormFields[$i] != '') {
                 $this->data[] = array (
                     'name'  => $this->hsFormFields[$i],
-                    'value' => (is_array ($this->postedData[$this->cf7FormFields[$i]]) ? implode(';', $this->postedData[$this->cf7FormFields[$i]]) : $this->postedData[$this->cf7FormFields[$i]])
+                    'value' => (is_array (sanitize_text_field($this->postedData[$this->cf7FormFields[$i]])) ? implode(';', sanitize_text_field($this->postedData[$this->cf7FormFields[$i]])) : sanitize_text_field($this->postedData[$this->cf7FormFields[$i]]))
                 );
             }
         }
@@ -83,7 +83,7 @@ class klypHubspot
 
     private function processContextData()
     {
-        $hutk = isset($_COOKIE['hubspotutk']) ? $_COOKIE['hubspotutk'] : '';
+        $hutk = isset($_COOKIE['hubspotutk']) ? sanitize_text_field($_COOKIE['hubspotutk']) : '';
         $referrer = wp_get_referer();
         $objId = 0;
 
@@ -127,7 +127,7 @@ class klypHubspot
 
         for ($i = 0; $i <= count($hsDealbreakerFields); $i++) { 
             // if a condition is met
-            if ($this->postedData[$hsDealbreakerFields[$i]] == $hsDealbreakerValues[$i] && $this->postedData[$hsDealbreakerFields[$i]] != '') {
+            if (sanitize_text_field($this->postedData[$hsDealbreakerFields[$i]]) == $hsDealbreakerValues[$i] && sanitize_text_field($this->postedData[$hsDealbreakerFields[$i]]) != '') {
                 $this->dealbreaker = true;
                 break;
             }
@@ -194,9 +194,9 @@ class klypHubspot
             return;
         }
 
-        $url    = $this->basePath . 'deals/v1/deal/' . $dealId . '?hapikey=' . $this->apiKey;
-        $response = $this->remoteGet($url, 'application/json');
-        $status = $this->remoteStatus($response);
+        $url        = $this->basePath . 'deals/v1/deal/' . $dealId . '?hapikey=' . $this->apiKey;
+        $response   = $this->remoteGet($url, 'application/json');
+        $status     = $this->remoteStatus($response);
 
         if ($status == 200) {
             $body = wp_remote_retrieve_body($response);
