@@ -330,7 +330,8 @@ function klypCf7HsSaveSettings($contact_form, $cs7Fields)
         if (isset($_POST[$key]) && ! is_array($_POST[$key]) && $_POST[$key] == '') {
             delete_post_meta($contact_form, '_' . $key);
         } elseif (isset($_POST[$key]) && $_POST[$key] != null) {
-            update_post_meta($contact_form, '_' . $key, $_POST[$key]);
+            $sanitizedValue = klypCF7ToHubspotSanitizeInput($_POST[$key]);
+            update_post_meta($contact_form, '_' . $key, $sanitizedValue);
         }
     }
 }

@@ -29,7 +29,8 @@ function klypCF7ToHubspotSettings()
  * 
  * @return void
  */
-function klypCF7ToHubspotRegisterSettings() {
+function klypCF7ToHubspotRegisterSettings()
+{
     //register our settings
     define('KlypCF7TOHusbspot', 'klyp-cf7-to-hubspot');
     register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_api_key');
@@ -37,3 +38,24 @@ function klypCF7ToHubspotRegisterSettings() {
     register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_base_url');
 }
 add_action( 'admin_init', 'klypCF7ToHubspotRegisterSettings' );
+
+/**
+ * Sanitize input
+ * 
+ * @param string/array
+ * @return string/array
+ */
+function klypCF7ToHubspotSanitizeInput($input)
+{
+    if (is_array($input)) {
+        $return = array ();
+
+        foreach ($input as $key => $value) {
+            $return[$key] = sanitize_text_field($value);
+        }
+
+        return $return;
+    } else {
+        return sanitize_text_field($input);
+    }
+}

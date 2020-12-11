@@ -17,7 +17,6 @@
     }
   ],
   "keywords": ["wordpress", "plugin", "contact form", "cf7", "contact form 7", "hubspot"],
-  "homepage": "https://klyp.co/",
   "support": {
     "issues": "https://github.com/klyp/klyp-cf7-to-hubspot/issues"
   },
@@ -28,6 +27,7 @@
     "composer/installers": "~1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7"
+    "phpunit/phpunit": "^7",
+    "wpackagist-plugin/contact-form-7": "*"
   }
 }

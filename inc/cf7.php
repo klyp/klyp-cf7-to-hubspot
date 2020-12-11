@@ -39,7 +39,7 @@ function klypHsCf7CatchSubmission($result, $tags)
     }
 
     // form options
-    $cf7FormId          = intval($_POST['_wpcf7']);
+    $cf7FormId          = intval(sanitize_key($_POST['_wpcf7']));
     $cf7FormRedirect    = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-form-redirect', true);
     $cf7FormFields      = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-cf-map-fields', true);
     $hsFormFields       = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-hs-map-fields', true);
@@ -49,7 +49,7 @@ function klypHsCf7CatchSubmission($result, $tags)
     $hubspot->cf7FormId     = $cf7FormId;
     $hubspot->cf7FormFields = $cf7FormFields;
     $hubspot->hsFormFields  = $hsFormFields;
-    $hubspot->postedData    = $_POST;
+    $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
     $hubspot->apiKey        = get_option('klyp_cf7tohs_api_key');
     $hubspot->portalId      = get_option('klyp_cf7tohs_portal_id');
     $hubspot->hsFormId      = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-form-id', true);
