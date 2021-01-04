@@ -13,12 +13,13 @@ defined('ABSPATH') || die('Wordpress is not installed properly.');
         <a href="?page=klyp-cf7-to-hubspot" class="nav-tab nav-tab-active">Settings</a>
     </h2>
 
-        <?php
-            settings_fields(KlypCF7TOHusbspot);
-            do_settings_sections(KlypCF7TOHusbspot);
-        ?>
-        <section>
-            <div id="klyp-cf7-to-hubspot-api-key" class="klyp-cf7-to-hubspot-api-key">
+    <section>
+        <form method="post" action="<?= admin_url('options.php'); ?>">
+            <?php
+                settings_fields(KlypCF7TOHusbspot);
+                do_settings_sections(KlypCF7TOHusbspot);
+            ?>
+            <div id="klyp-cf7-to-hubspot-api-key-secret" class="klyp-cf7-to-hubspot-api-key">
                 <h2 class="title">Hubspot API Key</h2>
                 <p>Click <a href="https://knowledge.hubspot.com/integrations/how-do-i-get-my-hubspot-api-key" target="_blank">here</a> on how to access your Hubspot API key</p>
                 <input type="text" name="klyp_cf7tohs_api_key" id="klyp_cf7tohs_api_key" class="large-text code" value="<?= esc_attr(get_option('klyp_cf7tohs_api_key')); ?>">
@@ -35,6 +36,8 @@ defined('ABSPATH') || die('Wordpress is not installed properly.');
                 <p>Usually <i>https://api.hubapi.com/</i></p>
                 <input type="text" name="klyp_cf7tohs_base_url" id="klyp_cf7tohs_base_url" class="large-text code" value="<?= esc_attr(get_option('klyp_cf7tohs_base_url')); ?>">
             </div>
-        </section>
 
+            <?= submit_button('Save Settings'); ?>
+        </form>
+    </section>
 </div>
