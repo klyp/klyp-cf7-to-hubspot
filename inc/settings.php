@@ -51,7 +51,7 @@ function klypCF7ToHubspotSanitizeInput($input)
         $return = array ();
 
         foreach ($input as $key => $value) {
-            $return[$key] = sanitize_text_field($value);
+            $return[$key] = is_array($value) ? $value : sanitize_text_field($value);
         }
 
         return $return;

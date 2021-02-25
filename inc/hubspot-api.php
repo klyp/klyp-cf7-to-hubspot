@@ -74,7 +74,7 @@ class klypHubspot
             if ($this->cf7FormFields[$i] != '') {
                 $this->data[] = array (
                     'name'  => $this->hsFormFields[$i],
-                    'value' => (is_array (sanitize_text_field($this->postedData[$this->cf7FormFields[$i]])) ? implode(';', sanitize_text_field($this->postedData[$this->cf7FormFields[$i]])) : sanitize_text_field($this->postedData[$this->cf7FormFields[$i]]))
+                    'value' => (is_array ($this->postedData[$this->cf7FormFields[$i]]) ? implode(';', $this->postedData[$this->cf7FormFields[$i]]) : sanitize_text_field($this->postedData[$this->cf7FormFields[$i]]))
                 );
             }
         }
