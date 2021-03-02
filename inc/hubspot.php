@@ -27,206 +27,209 @@ add_filter('wpcf7_editor_panels', 'klypCf7HsAdditionalSettings');
  */
 function klypCf7HsAdditionalSettingsTab($post)
 {
-    if (get_post_meta($post->id(), '_klyp-cf7-to-hubspot-form-id', true) == '') {
-        echo '
-            <h2>Hubspot Settings</h2>
-            <table class="form-table" role="presentation">
-                <tbody>
-                    <tr>
-                        <td colspan="2">
-                            <p class="description">
-                                Hubspot Form ID
-                            </p>
-                            <label for="klyp-cf7-to-hubspot-form-id">
-                                <input type="text" id="klyp-cf7-to-hubspot-form-id" name="klyp-cf7-to-hubspot-form-id" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-form-id', true)) . '" class="large-text code">
-                            </label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>';
-    } else {
+    echo '
+        <h2>Hubspot Settings</h2>
+        <table class="form-table" role="presentation">
+            <tbody>
+                <tr>
+                    <td>
+                        <p class="description">
+                            Hubspot Form ID
+                        </p>
+                        <label for="klyp-cf7-to-hubspot-form-id">
+                            <input type="text" id="klyp-cf7-to-hubspot-form-id" name="klyp-cf7-to-hubspot-form-id" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-form-id', true)) . '" class="large-text code">
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>';
+
+    if (get_post_meta($post->id(), '_klyp-cf7-to-hubspot-form-id', true) != '') {
         $cfFields       = klypCf7HsGetCfFormFields($post->id());
         $klypHubspot    = new klypHubspot();
         $hsFields       = $klypHubspot->getFormFields(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-form-id', true));
 
         echo '
-            <h2>Hubspot Settings</h2>
-            <table class="form-table" role="presentation">
-                <tbody>
-                    <tr>
-                        <td>
-                            <p class="description">
-                                Redirect after form submission
-                            </p>
-                            <label for="klyp-cf7-to-hubspot-form-redirect">
-                                <input type="text" id="klyp-cf7-to-hubspot-form-redirect" name="klyp-cf7-to-hubspot-form-redirect" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-form-redirect', true)) . '" class="large-text code">
-                            </label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <h2>Form Settings</h2>
+        <table class="form-table" role="presentation">
+            <tbody>
+                <tr>
+                    <td>
+                        <p class="description">
+                            Redirect after form submission
+                        </p>
+                        <label for="klyp-cf7-to-hubspot-form-redirect">
+                            <input type="text" id="klyp-cf7-to-hubspot-form-redirect" name="klyp-cf7-to-hubspot-form-redirect" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-form-redirect', true)) . '" class="large-text code">
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-            <p><hr></p>
+        <p><hr></p>
 
-            <h2>Hubspot Integrations</h2>
-            <table class="form-table" role="presentation">
-                <tbody>
-                    <tr>
-                        <td width="50%">
-                            <p class="description">
-                                Email field name used in CF7 form
-                            </p>
-                            <label for="klyp-cf7-to-hubspot-cf7-email-field">
-                                <select id="klyp-cf7-to-hubspot-cf7-email-field" name="klyp-cf7-to-hubspot-cf7-email-field" class="large-text code">
-                                    <option value="">Please select form field to map</option>';
+        <h2>Hubspot Integrations</h2>
+        <table class="form-table" role="presentation">
+            <tbody>
+                <tr>
+                    <td width="50%">
+                        <p class="description">
+                            Email field name used in CF7 form
+                        </p>
+                        <label for="klyp-cf7-to-hubspot-cf7-email-field">
+                            <select id="klyp-cf7-to-hubspot-cf7-email-field" name="klyp-cf7-to-hubspot-cf7-email-field" class="large-text code">
+                                <option value="">Please select form field to map</option>';
 
-                                    foreach ($cfFields as $key => $cfField) {
-                                        if ($cfField->name != '') {
-                                            echo '<option value="' . $cfField->name . '" ' . (esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-cf7-email-field', true)) == $cfField->name ? 'selected="selected"' : '') . '>' . $cfField->name . '</option>';
-                                        }
+                                foreach ($cfFields as $key => $cfField) {
+                                    if ($cfField->name != '') {
+                                        echo '<option value="' . $cfField->name . '" ' . (esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-cf7-email-field', true)) == $cfField->name ? 'selected="selected"' : '') . '>' . $cfField->name . '</option>';
                                     }
-                    echo '
-                                </select>
-                            </label>
-                        </td>
-                        <td width="50%">';
-
-                        echo '
-                            <p class="description">
-                                Email field name used in hubspot
-                            </p>
-                            <label for="klyp-cf7-to-hubspot-email-field">
-                                <select id="klyp-cf7-to-hubspot-email-field" name="klyp-cf7-to-hubspot-email-field" class="large-text code">
-                                    <option value="">Please select email field used in your hubspot form</option>';
+                                }
+                echo '
+                            </select>
+                        </label>
+                    </td>
+                    <td width="50%">
+                        <p class="description">
+                            Email field name used in hubspot form
+                        </p>
+                        <label for="klyp-cf7-to-hubspot-email-field">
+                            <select id="klyp-cf7-to-hubspot-email-field" name="klyp-cf7-to-hubspot-email-field" class="large-text code">
+                                <option value="">Please select email field</option>';
 
                                 foreach ($hsFields as $key => $hsField) {
                                     echo '<option value="' . $hsField->name . '"' . ((get_post_meta($post->id(), '_klyp-cf7-to-hubspot-email-field', true) == $hsField->name) ? 'selected="selected"' : '') . '>' . $hsField->label . ' (' . $hsField->name . ')</option>';
                                 }
+                echo '
+                            </select>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="description">
+                            Hubspot Pipeline ID
+                        </p>
+                        <label for="klyp-cf7-to-hubspot-pipeline-id">
+                            <input type="text" id="klyp-cf7-to-hubspot-pipeline-id" name="klyp-cf7-to-hubspot-pipeline-id" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-pipeline-id', true)) . '" class="large-text code">
+                        </label>
+                    </td>
+                    <td>
+                        <p class="description">
+                            Hubspot Stage ID
+                        </p>
+                        <label for="klyp-cf7-to-hubspot-stage-id">
+                            <input type="text" id="klyp-cf7-to-hubspot-stage-id" name="klyp-cf7-to-hubspot-stage-id" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-stage-id', true)) . '" class="large-text code">
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><hr></p>
+
+        <h2>Form Mapping</h2>
+        <p>Map contact form fields to Hubspot fields</p>
+        <table class="form-table" role="presentation">
+            <thead>
+                <tr>
+                    <th>
+                        Contact Form Field
+                    </th>
+                    <th>
+                        Hubspot Form Field
+                    </th>
+                </tr>
+            </thead>
+            <tbody>';
+
+                $cfMapFormFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-cf-map-fields', true);
+                $hsMapFormFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-hs-map-fields', true);
+
+                if (! empty($cfMapFormFields)) {
+                    for ($i = 0; $i <= count($cfMapFormFields); $i++) {
+
+                        if (empty($cfMapFormFields[$i]) || empty($hsMapFormFields[$i])) {
+                            continue;
+                        }
 
                         echo '
-                                </select>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <p class="description">
-                                Hubspot Form ID
-                            </p>
-                            <label for="klyp-cf7-to-hubspot-form-id">
-                                <input type="text" id="klyp-cf7-to-hubspot-form-id" name="klyp-cf7-to-hubspot-form-id" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-form-id', true)) . '" class="large-text code">
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="description">
-                                Hubspot Pipeline ID
-                            </p>
-                            <label for="klyp-cf7-to-hubspot-pipeline-id">
-                                <input type="text" id="klyp-cf7-to-hubspot-pipeline-id" name="klyp-cf7-to-hubspot-pipeline-id" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-pipeline-id', true)) . '" class="large-text code">
-                            </label>
-                        </td>
-                        <td>
-                            <p class="description">
-                                Hubspot Stage ID
-                            </p>
-                            <label for="klyp-cf7-to-hubspot-stage-id">
-                                <input type="text" id="klyp-cf7-to-hubspot-stage-id" name="klyp-cf7-to-hubspot-stage-id" value="' . esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-stage-id', true)) . '" class="large-text code">
-                            </label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            <tr>
+                                <td width="50%">
+                                    <select id="klyp-cf7-to-hubspot-cf-map-fields" name="klyp-cf7-to-hubspot-cf-map-fields[]" class="large-text code">
+                                        <option value="">Please select form field to map</option>';
 
-            <p><hr></p>
-
-            <h2>Form Mapping</h2>
-            <p>Map contact form fields to Hubspot fields</p>
-            <table class="form-table" role="presentation">
-                <thead>
-                    <tr>
-                        <th>
-                            Contact Form Field
-                        </th>
-                        <th>
-                            Hubspot Form Field
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>';
-
-                    $cfMapFormFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-cf-map-fields', true);
-                    $hsMapFormFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-hs-map-fields', true);
-
-                    if (! empty($cfMapFormFields)) {
-                        for ($i = 0; $i <= count($cfMapFormFields); $i++) {
-
-                            if (empty($cfMapFormFields[$i]) || empty($hsMapFormFields[$i])) {
-                                continue;
-                            }
-
-                            echo '
-                                <tr>
-                                    <td width="50%">
-                                        <select id="klyp-cf7-to-hubspot-cf-map-fields" name="klyp-cf7-to-hubspot-cf-map-fields[]" class="large-text code">
-                                            <option value="">Please select form field to map</option>';
-
-                                            foreach ($cfFields as $key => $cfField) {
-                                                if ($cfField->name != '') {
-                                                    echo '<option value="' . $cfField->name . '" ' . ($cfMapFormFields[$i] == $cfField->name ? 'selected="selected"' : '') . '>' . $cfField->name . '</option>';
-                                                }
+                                        foreach ($cfFields as $key => $cfField) {
+                                            if ($cfField->name != '') {
+                                                echo '<option value="' . $cfField->name . '" ' . ($cfMapFormFields[$i] == $cfField->name ? 'selected="selected"' : '') . '>' . $cfField->name . '</option>';
                                             }
-                            echo '
-                                        </select>
-                                    </td>
-                                    <td width="50%">
-                                        <select id="klyp-cf7-to-hubspot-hs-map-fields" name="klyp-cf7-to-hubspot-hs-map-fields[]" class="large-text code">
-                                            <option value="">Please select hubspot field to map</option>';
+                                        }
+                        echo '
+                                    </select>
+                                </td>
+                                <td width="50%">
+                                    <select id="klyp-cf7-to-hubspot-hs-map-fields" name="klyp-cf7-to-hubspot-hs-map-fields[]" class="large-text code">
+                                        <option value="">Please select hubspot field to map</option>';
 
-                                            foreach ($hsFields as $key => $hsField) {
-                                                if ($hsField->name != '') {
-                                                    echo '<option value="' . $hsField->name . '" ' . ($hsMapFormFields[$i] == $hsField->name ? 'selected="selected"' : '') . '>' . $hsField->label . ' (' . $hsField->name . ')</option>';
-                                                }
+                                        foreach ($hsFields as $key => $hsField) {
+                                            if ($hsField->name != '') {
+                                                echo '<option value="' . $hsField->name . '" ' . ($hsMapFormFields[$i] == $hsField->name ? 'selected="selected"' : '') . '>' . $hsField->label . ' (' . $hsField->name . ')</option>';
                                             }
-                            echo '
-                                    </td>
-                                </tr>';
-                        }
+                                        }
+                        echo '
+                                </td>
+                            </tr>';
                     }
-            echo '
-                    <tr>
-                        <td width="50%">
-                            <select id="klyp-cf7-to-hubspot-cf-map-fields" name="klyp-cf7-to-hubspot-cf-map-fields[]" class="large-text code">
-                                    <option value="">Please select form field to map</option>';
+                }
+        echo '
+                <tr>
+                    <td width="50%">
+                        <select id="klyp-cf7-to-hubspot-cf-map-fields" name="klyp-cf7-to-hubspot-cf-map-fields[]" class="large-text code">
+                                <option value="">Please select form field to map</option>';
 
-                                foreach ($cfFields as $key => $cfField) {
-                                    if ($cfField->name != '') {
-                                        echo '<option value="' . $cfField->name . '">' . $cfField->name . '</option>';
-                                    }
+                            foreach ($cfFields as $key => $cfField) {
+                                if ($cfField->name != '') {
+                                    echo '<option value="' . $cfField->name . '">' . $cfField->name . '</option>';
                                 }
-            echo '
-                            </select>
-                        </td>
-                        <td width="50%">
-                            <select id="klyp-cf7-to-hubspot-hs-map-fields" name="klyp-cf7-to-hubspot-hs-map-fields[]" class="large-text code">
-                                    <option value="">Please select hubspot field to map</option>';
+                            }
+        echo '
+                        </select>
+                    </td>
+                    <td width="50%">
+                        <select id="klyp-cf7-to-hubspot-hs-map-fields" name="klyp-cf7-to-hubspot-hs-map-fields[]" class="large-text code">
+                                <option value="">Please select hubspot field to map</option>';
 
-                                foreach ($hsFields as $key => $hsField) {
-                                    if ($hsField->name != '') {
-                                        echo '<option value="' . $hsField->name . '">' . $hsField->label . ' (' . $hsField->name . ')</option>';
-                                    }
+                            foreach ($hsFields as $key => $hsField) {
+                                if ($hsField->name != '') {
+                                    echo '<option value="' . $hsField->name . '">' . $hsField->label . ' (' . $hsField->name . ')</option>';
                                 }
-            
-            echo '          </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            }
+        
+        echo '          </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-            <p><hr></p>
+        <p><hr></p>';
 
-            <h2>Deal Creation Conditions</h2>
+            $hsDealbreakerAllow  = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-allow', true);
+            $hsDealbreakerFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-field', true);
+            $hsDealbreakerValues = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-value', true);
+
+        echo '
+
+        <h2>Deal Creation Conditions</h2>
+        <p>
+            <label for="klyp-cf7-to-hubspot-dealbreaker-allow">
+                <input type="checkbox" id="klyp-cf7-to-hubspot-dealbreaker-allow" name="klyp-cf7-to-hubspot-dealbreaker-allow" value="true" ' . (($hsDealbreakerAllow == 'true') ? 'checked="checked"' : '') . '> Do not create deals
+            </label>
+        </p>
+        
+        <p><hr></p>';
+
+        if ($hsDealbreakerAllow != 'true') {
+            echo '
             <p>Do not create deal if any of the following condtion is met</p>
             <table class="form-table" role="presentation">
                 <thead>
@@ -240,8 +243,6 @@ function klypCf7HsAdditionalSettingsTab($post)
                     </tr>
                 </thead>
                 <tbody>';
-                    $hsDealbreakerFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-field', true);
-                    $hsDealbreakerValues = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-value', true);
 
                     if (! empty($hsDealbreakerFields)) {
                         for ($i = 0; $i <= count($hsDealbreakerFields); $i++) {
@@ -251,7 +252,7 @@ function klypCf7HsAdditionalSettingsTab($post)
                             }
                             echo '
                                 <tr>
-                                  <td width="50%">
+                                <td width="50%">
                                     <select id="klyp-cf7-to-hubspot-dealbreaker-field" name="klyp-cf7-to-hubspot-dealbreaker-field[]" class="large-text code">
                                             <option value="">Please select form field to map</option>';
 
@@ -262,10 +263,10 @@ function klypCf7HsAdditionalSettingsTab($post)
                                             }
                             echo '
                                     </select>
-                                  </td>
-                                  <td width="50%">
+                                </td>
+                                <td width="50%">
                                     <input type="text" name="klyp-cf7-to-hubspot-dealbreaker-value[]" value="' . $hsDealbreakerValues[$i] . '" class="large-text code">
-                                  </td>
+                                </td>
                                 </tr>';
                         }
                     }
@@ -288,8 +289,8 @@ function klypCf7HsAdditionalSettingsTab($post)
                         </td>
                     </tr>
                 </tbody>
-            </table>
-        ';
+            </table>';
+        }
     }
 }
 
@@ -311,6 +312,7 @@ function klypCf7HsSaveContactForm($contact_form, $args)
         'klyp-cf7-to-hubspot-stage-id',
         'klyp-cf7-to-hubspot-cf-map-fields',
         'klyp-cf7-to-hubspot-hs-map-fields',
+        'klyp-cf7-to-hubspot-dealbreaker-allow',
         'klyp-cf7-to-hubspot-dealbreaker-field',
         'klyp-cf7-to-hubspot-dealbreaker-value'
     );
@@ -333,6 +335,11 @@ function klypCf7HsSaveSettings($contact_form, $cs7Fields)
             $sanitizedValue = klypCF7ToHubspotSanitizeInput($_POST[$key]);
             update_post_meta($contact_form, '_' . $key, $sanitizedValue);
         }
+    }
+
+    // checkboxes
+    if (! isset($_POST['klyp-cf7-to-hubspot-dealbreaker-allow'])) {
+        delete_post_meta($contact_form, '_klyp-cf7-to-hubspot-dealbreaker-allow');
     }
 }
 

@@ -6,6 +6,9 @@ This plugin requires you to install Contact Form 7
 https://en-au.wordpress.org/plugins/contact-form-7/
 
 ### Changes
+#### v1.0.5 - 2021.03.02
+Allow not creating deal
+
 #### v1.0.4 - 2021.02.25
 Fixed posted array
 
