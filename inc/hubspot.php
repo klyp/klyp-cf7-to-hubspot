@@ -213,7 +213,7 @@ function klypCf7HsAdditionalSettingsTab($post)
 
         <p><hr></p>';
 
-            $hsDealbreakerAllow  = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-allow', true);
+            $hsDealbreakerAllow  = (bool) get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-allow', true);
             $hsDealbreakerFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-field', true);
             $hsDealbreakerValues = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-dealbreaker-value', true);
 
@@ -222,13 +222,13 @@ function klypCf7HsAdditionalSettingsTab($post)
         <h2>Deal Creation Conditions</h2>
         <p>
             <label for="klyp-cf7-to-hubspot-dealbreaker-allow">
-                <input type="checkbox" id="klyp-cf7-to-hubspot-dealbreaker-allow" name="klyp-cf7-to-hubspot-dealbreaker-allow" value="true" ' . (($hsDealbreakerAllow == 'true') ? 'checked="checked"' : '') . '> Do not create deals
+                <input type="checkbox" id="klyp-cf7-to-hubspot-dealbreaker-allow" name="klyp-cf7-to-hubspot-dealbreaker-allow" value="true" ' . (($hsDealbreakerAllow === true) ? 'checked="checked"' : '') . '> Do not create deals
             </label>
         </p>
         
         <p><hr></p>';
 
-        if ($hsDealbreakerAllow != 'true') {
+        if ($hsDealbreakerAllow !== true) {
             echo '
             <p>Do not create deal if any of the following condtion is met</p>
             <table class="form-table" role="presentation">

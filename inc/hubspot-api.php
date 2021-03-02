@@ -122,12 +122,12 @@ class klypHubspot
             );
 
         // get settings
-        $hsDealbreakerAllow  = get_post_meta($this->cf7FormId, '_klyp-cf7-to-hubspot-dealbreaker-allow', true);
+        $hsDealbreakerAllow  = (bool) get_post_meta($this->cf7FormId, '_klyp-cf7-to-hubspot-dealbreaker-allow', true);
         $hsDealbreakerFields = get_post_meta($this->cf7FormId, '_klyp-cf7-to-hubspot-dealbreaker-field', true);
         $hsDealbreakerValues = get_post_meta($this->cf7FormId, '_klyp-cf7-to-hubspot-dealbreaker-value', true);
 
         // if do not create deals is set
-        if ($hsDealbreakerAllow == true) {
+        if ($hsDealbreakerAllow === true) {
             $return = array (
                 'success'   => false,
                 'message'   => 'Do not create deals is set'
