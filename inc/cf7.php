@@ -68,7 +68,7 @@ function klypHsCf7CatchSubmission($result, $tags)
         if ($hubspotReturn['errors']) {
             foreach ($hubspotReturn['errors'] as $key => $value) {
                 foreach ($tags as $tagkey => $tag) {
-                    if (strpos($value->message, 'fields.' . substr($tag['name'], 3)) !== false) {
+                    if (! empty($tag['name']) && strpos($value->message, 'fields.' . $tag['name']) !== false) {
                         $result->invalidate($tag['name'], $value->message);
                     }
                 }

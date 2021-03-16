@@ -4,7 +4,7 @@ Tags: contact, form, cf7, hubspot
 Requires at least: 5.2
 Tested up to: 5.6.1
 Requires PHP: 7.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPL2+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -14,6 +14,9 @@ Klyp CF7 to Hubspot
 This plugin allows you to map CF7 fields to Hubspot form fields
 
 == Changelog ==
+v1.0.6 - 2021.03.16
+Fixed error capture on hubspot
+
 v1.0.5 - 2021.03.02
 Allow not creating deal
 
