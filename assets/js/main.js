@@ -1,8 +1,7 @@
 (function($)
 {
-	'use strict';
-
-	$(function()
+    'use strict';
+    $(function()
     {
         $('#klyp-cf7-to-hubspot-map-add-new-map').on('click', function(e) {
             e.preventDefault();
@@ -29,5 +28,4 @@
             }
         });
     });
-
 })(jQuery);
