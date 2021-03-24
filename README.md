@@ -6,6 +6,9 @@ This plugin requires you to install Contact Form 7
 https://en-au.wordpress.org/plugins/contact-form-7/
 
 ### Changes
+#### v1.0.7 - 2021.03.24
+Added dynamic fields
+
 #### v1.0.6 - 2021.03.16
 Fixed error capture on hubspot
 

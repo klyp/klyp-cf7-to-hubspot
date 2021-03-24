@@ -3,7 +3,7 @@
  * Plugin Name: Klyp Contact Form 7 to Hubspot
  * Plugin URI: https://github.com/klyp/klyp-cf7-to-hubspot
  * Description: This plugin allows you to map CF7 fields to Hubspot form fields.
- * Version: 1.0.6
+ * Version: 1.0.7
  * Author: Klyp
  * Author URI: https://klyp.co
  * License: GPL2
@@ -35,7 +35,6 @@ if (! class_exists('klypCF7ToHubspot')) {
          */
         public static function activate()
         {
-            
         }
 
         /**
@@ -44,7 +43,6 @@ if (! class_exists('klypCF7ToHubspot')) {
          */
         public static function deactivate()
         {
-
         }
     }
 }
@@ -53,7 +51,7 @@ if (class_exists('klypCF7ToHubspot')) {
     // Installation and uninstallation hooks
     register_activation_hook(__FILE__, array('klypCF7ToHubspot', 'activate'));
     register_deactivation_hook(__FILE__, array('klypCF7ToHubspot', 'deactivate'));
-    
+
     // instantiate the plugin class
     $plugin = new klypCF7ToHubspot();
 }

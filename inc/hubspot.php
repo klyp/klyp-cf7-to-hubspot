@@ -133,16 +133,18 @@ function klypCf7HsAdditionalSettingsTab($post)
         <table class="form-table" role="presentation">
             <thead>
                 <tr>
-                    <th>
+                    <th width="45%">
                         Contact Form Field
                     </th>
-                    <th>
+                    <th width="45%">
                         Hubspot Form Field
                     </th>
+                    <td width="10%" align="right">
+                        <button id="klyp-cf7-to-hubspot-map-add-new-map">+</button>
+                    </td>
                 </tr>
             </thead>
-            <tbody>';
-
+            <tbody id="klyp-cf7-to-hubspot-tbody-map">';
                 $cfMapFormFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-cf-map-fields', true);
                 $hsMapFormFields = get_post_meta($post->id(), '_klyp-cf7-to-hubspot-hs-map-fields', true);
 
@@ -155,7 +157,7 @@ function klypCf7HsAdditionalSettingsTab($post)
 
                         echo '
                             <tr>
-                                <td width="50%">
+                                <td>
                                     <select id="klyp-cf7-to-hubspot-cf-map-fields" name="klyp-cf7-to-hubspot-cf-map-fields[]" class="large-text code">
                                         <option value="">Please select form field to map</option>';
 
@@ -167,7 +169,7 @@ function klypCf7HsAdditionalSettingsTab($post)
                         echo '
                                     </select>
                                 </td>
-                                <td width="50%">
+                                <td>
                                     <select id="klyp-cf7-to-hubspot-hs-map-fields" name="klyp-cf7-to-hubspot-hs-map-fields[]" class="large-text code">
                                         <option value="">Please select hubspot field to map</option>';
 
@@ -178,12 +180,17 @@ function klypCf7HsAdditionalSettingsTab($post)
                                         }
                         echo '
                                 </td>
+                                <td align="right">
+                                    <button class="klyp-cf7-to-hubspot-cf-remove-map">x</button>
+                                </td>
                             </tr>';
                     }
                 }
         echo '
+            </tbody>
+            <tfoot id="klyp-cf7-to-hubspot-tfoot-map" style="display:none;">
                 <tr>
-                    <td width="50%">
+                    <td>
                         <select id="klyp-cf7-to-hubspot-cf-map-fields" name="klyp-cf7-to-hubspot-cf-map-fields[]" class="large-text code">
                                 <option value="">Please select form field to map</option>';
 
@@ -195,20 +202,22 @@ function klypCf7HsAdditionalSettingsTab($post)
         echo '
                         </select>
                     </td>
-                    <td width="50%">
+                    <td>
                         <select id="klyp-cf7-to-hubspot-hs-map-fields" name="klyp-cf7-to-hubspot-hs-map-fields[]" class="large-text code">
-                                <option value="">Please select hubspot field to map</option>';
+                            <option value="">Please select hubspot field to map</option>';
 
                             foreach ($hsFields as $key => $hsField) {
                                 if ($hsField->name != '') {
                                     echo '<option value="' . $hsField->name . '">' . $hsField->label . ' (' . $hsField->name . ')</option>';
                                 }
                             }
-        
         echo '          </select>
                     </td>
+                    <td align="right">
+                        <button class="klyp-cf7-to-hubspot-cf-remove-map">x</button>
+                    </td>
                 </tr>
-            </tbody>
+            </tfoot>
         </table>
 
         <p><hr></p>';
@@ -228,21 +237,24 @@ function klypCf7HsAdditionalSettingsTab($post)
         
         <p><hr></p>';
 
-        if ($hsDealbreakerAllow !== true) {
-            echo '
+        echo '
+        <div id="klyp-cf7-to-hubspot-dealbreakers" style="' . ($hsDealbreakerAllow === true ? 'display:none;' : '') . '">
             <p>Do not create deal if any of the following condtion is met</p>
             <table class="form-table" role="presentation">
                 <thead>
                     <tr>
-                        <th>
+                        <th width="45%">
                             If Field
                         </th>
-                        <th>
+                        <th width="45%">
                             Is
                         </th>
+                        <td width="10%" align="right">
+                            <button id="klyp-cf7-to-hubspot-map-add-new-dealbreaker">+</button>
+                        </td>
                     </tr>
                 </thead>
-                <tbody>';
+                <tbody id="klyp-cf7-to-hubspot-tbody-dealbreaker">';
 
                     if (! empty($hsDealbreakerFields)) {
                         for ($i = 0; $i <= count($hsDealbreakerFields); $i++) {
@@ -251,8 +263,8 @@ function klypCf7HsAdditionalSettingsTab($post)
                                 continue;
                             }
                             echo '
-                                <tr>
-                                <td width="50%">
+                            <tr>
+                                <td>
                                     <select id="klyp-cf7-to-hubspot-dealbreaker-field" name="klyp-cf7-to-hubspot-dealbreaker-field[]" class="large-text code">
                                             <option value="">Please select form field to map</option>';
 
@@ -264,15 +276,20 @@ function klypCf7HsAdditionalSettingsTab($post)
                             echo '
                                     </select>
                                 </td>
-                                <td width="50%">
+                                <td>
                                     <input type="text" name="klyp-cf7-to-hubspot-dealbreaker-value[]" value="' . $hsDealbreakerValues[$i] . '" class="large-text code">
                                 </td>
-                                </tr>';
+                                <td align="right">
+                                    <button class="klyp-cf7-to-hubspot-cf-remove-dealbreaker">x</button>
+                                </td>
+                            </tr>';
                         }
                     }
             echo '
+                </tbody>
+                <tfoot id="klyp-cf7-to-hubspot-tfoot-dealbreaker" style="display:none;">
                     <tr>
-                        <td width="50%">
+                        <td>
                             <select id="klyp-cf7-to-hubspot-dealbreaker-field" name="klyp-cf7-to-hubspot-dealbreaker-field[]" class="large-text code">
                                 <option value="">Please select form field to map</option>';
 
@@ -284,13 +301,16 @@ function klypCf7HsAdditionalSettingsTab($post)
                             echo '
                             </select>
                         </td>
-                        <td width="50%">
+                        <td>
                             <input type="text" name="klyp-cf7-to-hubspot-dealbreaker-value[]" value="" class="large-text code">
                         </td>
+                        <td align="right">
+                            <button class="klyp-cf7-to-hubspot-cf-remove-dealbreaker">x</button>
+                        </td>
                     </tr>
-                </tbody>
-            </table>';
-        }
+                </tfoot>
+            </table>
+        </div>';
     }
 }
 
