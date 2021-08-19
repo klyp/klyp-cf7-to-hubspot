@@ -67,10 +67,11 @@ function klypHsCf7CatchSubmission($result, $tags)
         // validate errors
         if ($hubspotReturn['errors']) {
             foreach ($hubspotReturn['errors'] as $key => $value) {
-                foreach ($tags as $tagkey => $tag) {
-                    if (! empty($tag['name']) && strpos($value->message, 'fields.' . $tag['name']) !== false) {
-                        $result->invalidate($tag['name'], $value->message);
-                    }
+                $hsErrorField = klypCf7HsGetStringBetween($value->message, "fields.", "'");
+                $hsErrorKey = array_search($hsErrorField, $hsFormFields);
+
+                if ($hsErrorKey) {
+                    $result->invalidate($cf7FormFields[$hsErrorKey], $value->message);
                 }
             }
             return $result;
@@ -88,3 +89,25 @@ function klypHsCf7CatchSubmission($result, $tags)
     return $result;
 }
 add_filter('wpcf7_validate', 'klypHsCf7CatchSubmission', 10, 2);
+
+/**
+ * Get string between
+ * @param string
+ * @param string
+ * @param string
+ * @return string
+ */
+function klypCf7HsGetStringBetween($string, $start, $end)
+{
+    if (strpos($string, $start)) {
+        $startCharCount = strpos($string, $start) + strlen($start);
+        $firstSubStr = substr($string, $startCharCount, strlen($string));
+        $endCharCount = strpos($firstSubStr, $end);
+        if ($endCharCount == 0) {
+            $endCharCount = strlen($firstSubStr);
+        }
+        return substr($firstSubStr, 0, $endCharCount);
+    } else {
+        return '';
+    }
+}
