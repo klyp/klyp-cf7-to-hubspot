@@ -6,7 +6,7 @@ This plugin requires you to install Contact Form 7
 https://en-au.wordpress.org/plugins/contact-form-7/
 
 ### Changes
-#### v1.0.8 - 2021.05.19
+#### v1.0.8 - 2021.08.19
 Validations mapping
 
 #### v1.0.7 - 2021.03.24

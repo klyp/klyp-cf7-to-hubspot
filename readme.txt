@@ -14,7 +14,7 @@ Klyp CF7 to Hubspot
 This plugin allows you to map CF7 fields to Hubspot form fields
 
 == Changelog ==
-v1.0.8 - 2021.05.19
+v1.0.8 - 2021.08.19
 Validations mapping
 
 v1.0.7 - 2021.03.24
