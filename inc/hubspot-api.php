@@ -42,7 +42,7 @@ class klypHubspot
                 $url = $url . '?hapikey=' . $this->apiKey;
             }
         } else if ($this->keyMode == 'private') {
-            $headers['Authorization'] = $this->apiKeyPrivate;
+            $headers['authorization'] = 'Bearer ' . $this->apiKeyPrivate;
         }
 
         $response = wp_remote_post(
@@ -69,12 +69,12 @@ class klypHubspot
                 $url = $url . '?hapikey=' . $this->apiKey;
             }
         } else if ($this->keyMode == 'private') {
-            $headers['Authorization'] = $this->apiKeyPrivate;
+            $headers['authorization'] = 'Bearer ' . $this->apiKeyPrivate;
         }
 
         $response = wp_remote_get(
             $url,
-            $headers
+            array('headers' => $headers)
         );
 
         return $response;
@@ -240,7 +240,7 @@ class klypHubspot
 
     public function getFormFields($formId, $property = null)
     {
-        $url        = $this->basePath . 'forms/v2/fields/' . $formId;
+        $url        = $this->basePath . 'marketing/v3/forms/' . $formId;
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
