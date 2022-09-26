@@ -181,7 +181,7 @@ class klypHubspot
             return;
         }
 
-        $url        = $this->basePath . 'contacts/v1/contact/email/' . $email . '/profile?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'contacts/v1/contact/email/' . $email . '/profile';
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
@@ -208,7 +208,7 @@ class klypHubspot
             return;
         }
 
-        $url        = $this->basePath . 'contacts/v1/contact/vid/' . $contactId . '/profile?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'contacts/v1/contact/vid/' . $contactId . '/profile';
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
@@ -226,7 +226,7 @@ class klypHubspot
             return;
         }
 
-        $url        = $this->basePath . 'deals/v1/deal/' . $dealId . '?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'deals/v1/deal/' . $dealId;
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
@@ -240,7 +240,7 @@ class klypHubspot
 
     public function getFormFields($formId, $property = null)
     {
-        $url        = $this->basePath . 'forms/v2/fields/' . $formId . '?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'forms/v2/fields/' . $formId;
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
@@ -271,7 +271,7 @@ class klypHubspot
             return;
         }
      
-        $url = $this->basePath . 'deals/v1/deal/' . $this->dealId . '?hapikey=' . $this->apiKey;
+        $url = $this->basePath . 'deals/v1/deal/' . $this->dealId;
         $response = $this->remotePost($url, 'PUT', $properties, 'application/json');
         
         return $response;
@@ -283,7 +283,7 @@ class klypHubspot
             return;
         }
      
-        $url = $this->basePath . 'contacts/v1/contact/vid/' . $vid . '?hapikey=' . $this->apiKey;
+        $url = $this->basePath . 'contacts/v1/contact/vid/' . $vid;
         $response = $this->remotePost($url, 'POST', $properties, 'application/json');
         
         return $response;
@@ -396,7 +396,7 @@ class klypHubspot
         }
 
         $id         = '';
-        $url        = $this->basePath . 'deals/v1/deal?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'deals/v1/deal';
         $response   = $this->remotePost($url, 'POST', $deal, 'application/json');
         $status     = $this->remoteStatus($response);        
 
