@@ -44,7 +44,6 @@ class klypHubspot
         } else if ($this->keyMode == 'private') {
             $headers['Authorization'] = $this->apiKeyPrivate;
         }
-       
 
         $response = wp_remote_post(
             $url,
