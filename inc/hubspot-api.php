@@ -7,6 +7,7 @@ class klypHubspot
 {
     private $dealbreaker = false;
     public $apiKey;
+    public $apiKeyPrivate;
     public $portalId;
     public $basePath;
 
@@ -22,21 +23,35 @@ class klypHubspot
 
     public function __construct()
     {
-        $this->apiKey   = get_option('klyp_cf7tohs_api_key');
-        $this->portalId = get_option('klyp_cf7tohs_portal_id');
-        $this->basePath = get_option('klyp_cf7tohs_base_url');
+        $this->apiKey           = get_option('klyp_cf7tohs_api_key');
+        $this->apiKeyPrivate    = get_option('klyp_cf7tohs_api_key_private');
+        $this->keyMode          = $this->apiKeyPrivate != '' ? 'private' : 'apikey';
+        $this->portalId         = get_option('klyp_cf7tohs_portal_id');
+        $this->basePath         = get_option('klyp_cf7tohs_base_url');
     }
 
     private function remotePost($url, $method = 'POST', $body, $contentType)
     {
+        $headers = array (
+            'Content-Type' => $contentType
+        );
+        if ($this->keyMode == 'apikey') {
+            if (str_contains($url, '?')) {
+                $url = $url . '&hapikey=' . $this->apiKey;
+            } else {
+                $url = $url . '?hapikey=' . $this->apiKey;
+            }
+        } else if ($this->keyMode == 'private') {
+            $headers['Authorization'] = $this->apiKeyPrivate;
+        }
+       
+
         $response = wp_remote_post(
             $url,
             array (
                 'method'  => $method,
                 'body'    => wp_json_encode($body),
-                'headers' => array (
-                    'Content-Type' => $contentType
-                )
+                'headers' => $headers
             )
         );
 
@@ -45,13 +60,22 @@ class klypHubspot
 
     private function remoteGet($url, $contentType)
     {
+        $headers = array (
+            'Content-Type' => $contentType
+        );
+        if ($this->keyMode == 'apikey') {
+            if (str_contains($url, '?')) {
+                $url = $url . '&hapikey=' . $this->apiKey;
+            } else {
+                $url = $url . '?hapikey=' . $this->apiKey;
+            }
+        } else if ($this->keyMode == 'private') {
+            $headers['Authorization'] = $this->apiKeyPrivate;
+        }
+
         $response = wp_remote_get(
             $url,
-            array (
-                'headers' => array (
-                    'Content-Type'  => $contentType
-                )
-            )
+            $headers
         );
 
         return $response;
