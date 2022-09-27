@@ -46,6 +46,16 @@ class klypHubspot
         $this->basePath         = get_option('klyp_cf7tohs_base_url');
     }
 
+    /**
+     * Make a POST request
+     * 
+     * @param string $url The url to post to
+     * @param string $method The method to use (default POST)
+     * @param mixed $body The body of data to be posted
+     * @param string $contentType The specifed content type to be sent
+     * 
+     * @return array Returns an array of the response
+     */
     private function remotePost($url, $method = 'POST', $body, $contentType)
     {
         $headers = array(
@@ -73,6 +83,14 @@ class klypHubspot
         return $response;
     }
 
+    /**
+     * Make a GET request
+     * 
+     * @param string $url The url to post to
+     * @param string $contentType The specifed content type to be sent
+     * 
+     * @return array Returns an array of the response
+     */
     private function remoteGet($url, $contentType)
     {
         $headers = array(
@@ -98,6 +116,13 @@ class klypHubspot
         return $response;
     }
 
+    /**
+     * Parse the status from the response
+     * 
+     * @param mixed $response The response needing to be parsed
+     * 
+     * @return string The status of the reponse
+     */
     public function remoteStatus($response)
     {
         if (is_wp_error($response)) {
@@ -109,6 +134,11 @@ class klypHubspot
         return $status;
     }
 
+    /**
+     * Process the data of a submitted form and turn it into a format that HubSpot expects
+     * 
+     * @return array An array of user data
+     */
     private function processData()
     {
         for ($i = 0; $i <= count($this->cf7FormFields); $i++) {
@@ -122,6 +152,11 @@ class klypHubspot
         return $this->data;
     }
 
+    /**
+     * Packages the metadata for the current user session ready to be submitted to HubSpot
+     * 
+     * @return array An array containing metadata about the user session
+     */
     private function processContextData()
     {
         $hutk = isset($_COOKIE['hubspotutk']) ? sanitize_text_field($_COOKIE['hubspotutk']) : '';
@@ -155,6 +190,11 @@ class klypHubspot
         return $context;
     }
 
+    /**
+     * Checks to see if a deal needs to be made from the form submission
+     * 
+     * @return array a bool condition and a message on whether to create a deal
+     */
     public function processDealbreaker()
     {
         $return = array(
@@ -193,6 +233,14 @@ class klypHubspot
         return $return;
     }
 
+    /**
+     * Get a contact property from an email
+     * 
+     * @param string $email The email of the user
+     * @param string $property The Property being searched
+     * 
+     * @return string The property value
+     */
     public function getContactPropertyByEmail($email, $property)
     {
         if (! $email || ! $property) {
@@ -220,6 +268,13 @@ class klypHubspot
         return $return;
     }
 
+    /**
+     * Get a contact property from an id
+     * 
+     * @param string $contactId The id of the user
+     * 
+     * @return string The user details
+     */
     public function getContactPropertyById($contactId)
     {
         if (! $contactId) {
@@ -238,6 +293,13 @@ class klypHubspot
         return;
     }
 
+    /**
+     * Get the details of a deal from the deal id
+     * 
+     * @param string $dealId The id of the deal
+     * 
+     * @return mixed array|object The deal in an array format
+     */
     public function getDealDetails($dealId)
     {
         if (! $dealId) {
@@ -256,6 +318,14 @@ class klypHubspot
         return;
     }
 
+    /**
+     * Get the fields of the of a form, with an option to specify a property
+     * 
+     * @param string $formId The Id of the HubSpot form
+     * @param string $property The specfied property to get the field value of
+     * 
+     * @return mixed array|string Returns an array of fields or the value (type) of just one
+     */
     public function getFormFields($formId, $property = null)
     {
         $url        = $this->basePath . 'marketing/v3/forms/' . $formId;
@@ -290,6 +360,13 @@ class klypHubspot
         exit();
     }
 
+    /**
+     * Update a deal with the given properties
+     * 
+     * @param array $properties An array of properties to update the deal with
+     * 
+     * @return array The array message showing the success of the request
+     */
     public function updateDeal($properties)
     {
         if (empty($properties)) {
@@ -302,6 +379,14 @@ class klypHubspot
         return $response;
     }
 
+    /**
+     * Update a Contact with the given properties
+     * 
+     * @param string $vid The id of the user in HubSpot
+     * @param array $properties An array of properties to update the Contact with
+     * 
+     * @return array The array message showing the success of the request
+     */
     public function updateContact($vid, $properties)
     {
         if (empty($vid) || empty($properties)) {
@@ -314,6 +399,11 @@ class klypHubspot
         return $response;
     }
 
+    /**
+     * Create a Contact using the field values from the form and create a deal if needed
+     * 
+     * @return array The array message showing the success of the request
+     */
     public function createContact()
     {
         $data       = array('fields' => $this->processData());
@@ -414,6 +504,13 @@ class klypHubspot
         return $return;
     }
 
+    /**
+     * Create a deal using an array of properties
+     * 
+     * @param array $deal An array of properties to post to HubSpot
+     * 
+     * @return $string The Id of the deal
+     */
     private function createDeal($deal)
     {
         if (empty ($deal)) {
