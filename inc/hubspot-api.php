@@ -3,6 +3,22 @@
 // See if wordpress is properly installed
 defined('ABSPATH') || die('Wordpress is not installed properly.');
 
+// php8 backwards compatability based on original work from the PHP Laravel framework 
+if (! function_exists('str_contains')) {
+    /**
+     * A str_contrains function for backwards compatability
+     * 
+     * @param String $haystack The String to be searched
+     * @param String $needle The String for search for
+     * 
+     * @return bool Returns if the $haystack contains the needle
+     */
+    function str_contains($haystack, $needle) 
+    {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+}
+
 class klypHubspot
 {
     private $dealbreaker = false;
@@ -19,7 +35,7 @@ class klypHubspot
     public $cf7EmailField;
     public $hsEmailField;
     public $hsFormId;
-    public $postedData = array ();
+    public $postedData = array();
 
     public function __construct()
     {
@@ -32,7 +48,7 @@ class klypHubspot
 
     private function remotePost($url, $method = 'POST', $body, $contentType)
     {
-        $headers = array (
+        $headers = array(
             'Content-Type' => $contentType
         );
         if ($this->keyMode == 'apikey') {
@@ -47,7 +63,7 @@ class klypHubspot
 
         $response = wp_remote_post(
             $url,
-            array (
+            array(
                 'method'  => $method,
                 'body'    => wp_json_encode($body),
                 'headers' => $headers
@@ -59,7 +75,7 @@ class klypHubspot
 
     private function remoteGet($url, $contentType)
     {
-        $headers = array (
+        $headers = array(
             'Content-Type' => $contentType
         );
         if ($this->keyMode == 'apikey') {
@@ -74,7 +90,9 @@ class klypHubspot
 
         $response = wp_remote_get(
             $url,
-            array('headers' => $headers)
+            array(
+                'headers' => $headers
+            )
         );
 
         return $response;
@@ -95,9 +113,9 @@ class klypHubspot
     {
         for ($i = 0; $i <= count($this->cf7FormFields); $i++) {
             if ($this->cf7FormFields[$i] != '') {
-                $this->data[] = array (
+                $this->data[] = array(
                     'name'  => $this->hsFormFields[$i],
-                    'value' => (is_array ($this->postedData[$this->cf7FormFields[$i]]) ? implode(';', $this->postedData[$this->cf7FormFields[$i]]) : sanitize_text_field($this->postedData[$this->cf7FormFields[$i]]))
+                    'value' => (is_array($this->postedData[$this->cf7FormFields[$i]]) ? implode(';', $this->postedData[$this->cf7FormFields[$i]]) : sanitize_text_field($this->postedData[$this->cf7FormFields[$i]]))
                 );
             }
         }
@@ -116,7 +134,7 @@ class klypHubspot
 
         $currentUrl = get_permalink($objId);
         $pageName = get_the_title($objId);
-        $context = array ();
+        $context = array();
 
         if (! empty($hutk)) {
             $context['hutk'] = $hutk;
@@ -130,7 +148,7 @@ class klypHubspot
             $context['pageName'] = $pageName;
         }
 
-        $context = array (
+        $context = array(
             'context' => $context
         );
 
@@ -139,7 +157,7 @@ class klypHubspot
 
     public function processDealbreaker()
     {
-        $return = array (
+        $return = array(
                 'success'   => true,
                 'message'   => '',
             );
@@ -151,7 +169,7 @@ class klypHubspot
 
         // if do not create deals is set
         if ($hsDealbreakerAllow === true) {
-            $return = array (
+            $return = array(
                 'success'   => false,
                 'message'   => 'Do not create deals is set'
             );
@@ -166,7 +184,7 @@ class klypHubspot
         }
 
         if ($this->dealbreaker == true) {
-            $return = array (
+            $return = array(
                 'success'   => false,
                 'message'   => 'A deal breaker condition is met'
             );
@@ -251,14 +269,21 @@ class klypHubspot
                 $body = json_decode($body);
             }
 
+            $activeFields = [];
+            foreach ($body->fieldGroups as $key => $fieldGroups) {
+                foreach ($fieldGroups->fields as $key => $field) {
+                    array_push($activeFields, $field);
+                }
+            }
+
             if ($property) {
-                foreach ($body as $key => $value) {
+                foreach ($activeFields as $key => $value) {
                     if ($value->name == $property) {
                         return $value->type;
                     }
                 }
             } else {
-                return $body;
+                return $activeFields;
             }
         }
 
@@ -291,7 +316,7 @@ class klypHubspot
 
     public function createContact()
     {
-        $data       = array ('fields' => $this->processData());
+        $data       = array('fields' => $this->processData());
         $context    = $this->processContextData();
         $url        = 'https://api.hsforms.com/submissions/v3/integration/submit/' . $this->portalId . '/' . $this->hsFormId;
 
@@ -322,23 +347,23 @@ class klypHubspot
 
                 // if we get contact id
                 if ($hsContactId) {
-                    $deal = array (
-                        'properties'   => array (
-                            array (
+                    $deal = array(
+                        'properties'   => array(
+                            array(
                                 'name'  => 'dealstage',
                                 'value' => $stageId
                             ),
-                            array (
+                            array(
                                 'name'  => 'pipeline',
                                 'value' => $pipelineId
                             ),
-                            array (
+                            array(
                                 'name' => 'dealname',
                                 'value' => $cf7EmailField
                             )
                         ),
-                        'associations' => array (
-                            'associatedVids' => array ($hsContactId)
+                        'associations' => array(
+                            'associatedVids' => array($hsContactId)
                         ),
                     );
 
@@ -346,14 +371,14 @@ class klypHubspot
                     $this->dealId = $this->createDeal($deal);
                     
                     if (! empty($this->dealId)) {
-                        $properties = array ();
+                        $properties = array();
 
-                        $properties[] = array (
+                        $properties[] = array(
                             'name' => 'dealname',
                             'value' => $cf7EmailField . ' - ' . $this->dealId
                         );
 
-                        $properties = array ('properties' => $properties);
+                        $properties = array('properties' => $properties);
 
                         // update deal
                         $response = $this->updateDeal($properties);
@@ -361,7 +386,7 @@ class klypHubspot
                 }
             }
 
-            $return = array (
+            $return = array(
                 'success'   => true,
                 'message'   => '',
                 'dealId'    => $this->dealId
@@ -379,7 +404,7 @@ class klypHubspot
                 $errors = null;
             }
 
-            $return = array (
+            $return = array(
                 'success'   => false,
                 'message'   => $message,
                 'errors'    => $errors
