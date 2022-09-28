@@ -46,6 +46,30 @@ class klypHubspot
         $this->basePath         = get_option('klyp_cf7tohs_base_url');
     }
 
+    private function generateUrl($url)
+    {
+        if ($this->keyMode == 'apikey') {
+            if (str_contains($url, '?')) {
+                $url .= '&hapikey=' . $this->apiKey;
+            } else {
+                $url .= '?hapikey=' . $this->apiKey;
+            }
+        }
+        return $url;
+    }
+
+    private function generateHeaders($contentType)
+    {
+        $headers = array(
+            'Content-Type' => $contentType
+        );
+        if ($this->keyMode == 'private') {
+            $headers['authorization'] = 'Bearer ' . $this->apiKeyPrivate;
+        }
+
+        return $headers;
+    }
+
     /**
      * Make a POST request
      * 
@@ -58,18 +82,8 @@ class klypHubspot
      */
     private function remotePost($url, $method = 'POST', $body, $contentType)
     {
-        $headers = array(
-            'Content-Type' => $contentType
-        );
-        if ($this->keyMode == 'apikey') {
-            if (str_contains($url, '?')) {
-                $url = $url . '&hapikey=' . $this->apiKey;
-            } else {
-                $url = $url . '?hapikey=' . $this->apiKey;
-            }
-        } else if ($this->keyMode == 'private') {
-            $headers['authorization'] = 'Bearer ' . $this->apiKeyPrivate;
-        }
+        $url = $this->generateUrl($url);
+        $headers = $this->generateHeaders($contentType);
 
         $response = wp_remote_post(
             $url,
@@ -93,18 +107,8 @@ class klypHubspot
      */
     private function remoteGet($url, $contentType)
     {
-        $headers = array(
-            'Content-Type' => $contentType
-        );
-        if ($this->keyMode == 'apikey') {
-            if (str_contains($url, '?')) {
-                $url = $url . '&hapikey=' . $this->apiKey;
-            } else {
-                $url = $url . '?hapikey=' . $this->apiKey;
-            }
-        } else if ($this->keyMode == 'private') {
-            $headers['authorization'] = 'Bearer ' . $this->apiKeyPrivate;
-        }
+        $url = $this->generateUrl($url);
+        $headers = $this->generateHeaders($contentType);
 
         $response = wp_remote_get(
             $url,
