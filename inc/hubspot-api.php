@@ -46,6 +46,13 @@ class klypHubspot
         $this->basePath         = get_option('klyp_cf7tohs_base_url');
     }
 
+     /**
+     * Generate a URL based on the configruation
+     * 
+     * @param string $url The base url
+     * 
+     * @return string The url with extra components appended
+     */
     private function generateUrl($url)
     {
         if ($this->keyMode == 'apikey') {
@@ -58,17 +65,24 @@ class klypHubspot
         return $url;
     }
 
+    /**
+     * Generate a Header array based on the configruation
+     * 
+     * @param string $contentType The content type to be passed through
+     * 
+     * @return array the array of headers to be used in the request
+     */
     private function generateHeaders($contentType)
     {
-        $headers = array(
-            'Content-Type' => $contentType
-        );
+        $headers['Content-Type'] = $contentType;
+
         if ($this->keyMode == 'private') {
             $headers['authorization'] = 'Bearer ' . $this->apiKeyPrivate;
         }
 
         return $headers;
     }
+
 
     /**
      * Make a POST request
