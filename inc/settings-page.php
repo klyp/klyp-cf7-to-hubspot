@@ -25,6 +25,12 @@ defined('ABSPATH') || die('Wordpress is not installed properly.');
                 <input type="text" name="klyp_cf7tohs_api_key" id="klyp_cf7tohs_api_key" class="large-text code" value="<?= esc_attr(get_option('klyp_cf7tohs_api_key')); ?>">
             </div>
 
+            <div id="klyp-cf7-to-hubspot-api-key-secret" class="klyp-cf7-to-hubspot-api-key">
+                <h2 class="title">Hubspot Private API Key</h2>
+                <p>Click <a href="https://knowledge.hubspot.com/integrations/how-do-i-get-my-hubspot-api-key" target="_blank">here</a> on how to access your Hubspot API key</p>
+                <input type="text" name="klyp_cf7tohs_api_key_private" id="klyp_cf7tohs_api_key_private" class="large-text code" value="<?= esc_attr(get_option('klyp_cf7tohs_api_key_private')); ?>">
+            </div>
+
             <div id="klyp-cf7-to-hubspot-portal-id" class="klyp-cf7-to-hubspot-portal-id">
                 <h2 class="title">Hubspot Portal ID</h2>
                 <p>Click <a href="https://knowledge.hubspot.com/account/manage-multiple-hubspot-accounts" target="_blank">here</a> on how to get your portal ID.</p>

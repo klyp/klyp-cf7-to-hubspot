@@ -34,6 +34,7 @@ function klypCF7ToHubspotRegisterSettings()
     //register our settings
     define('KlypCF7TOHusbspot', 'klyp-cf7-to-hubspot');
     register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_api_key');
+    register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_api_key_private');
     register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_portal_id');
     register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_base_url');
 }

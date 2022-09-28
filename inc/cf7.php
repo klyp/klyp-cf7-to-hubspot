@@ -51,6 +51,7 @@ function klypHsCf7CatchSubmission($result, $tags)
     $hubspot->hsFormFields  = $hsFormFields;
     $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
     $hubspot->apiKey        = get_option('klyp_cf7tohs_api_key');
+    $hubspot->apiKeyPrivate = get_option('klyp_cf7tohs_api_key_private');
     $hubspot->portalId      = get_option('klyp_cf7tohs_portal_id');
     $hubspot->hsFormId      = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-form-id', true);
     $hubspot->cf7EmailField = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-cf7-email-field', true);

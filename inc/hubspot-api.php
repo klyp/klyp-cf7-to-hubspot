@@ -3,10 +3,27 @@
 // See if wordpress is properly installed
 defined('ABSPATH') || die('Wordpress is not installed properly.');
 
+// php8 backwards compatability based on original work from the PHP Laravel framework 
+if (! function_exists('str_contains')) {
+    /**
+     * A str_contrains function for backwards compatability
+     * 
+     * @param String $haystack The String to be searched
+     * @param String $needle The String for search for
+     * 
+     * @return bool Returns if the $haystack contains the needle
+     */
+    function str_contains($haystack, $needle) 
+    {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+}
+
 class klypHubspot
 {
     private $dealbreaker = false;
     public $apiKey;
+    public $apiKeyPrivate;
     public $portalId;
     public $basePath;
 
@@ -18,45 +35,112 @@ class klypHubspot
     public $cf7EmailField;
     public $hsEmailField;
     public $hsFormId;
-    public $postedData = array ();
+    public $postedData = array();
 
     public function __construct()
     {
-        $this->apiKey   = get_option('klyp_cf7tohs_api_key');
-        $this->portalId = get_option('klyp_cf7tohs_portal_id');
-        $this->basePath = get_option('klyp_cf7tohs_base_url');
+        $this->apiKey           = get_option('klyp_cf7tohs_api_key');
+        $this->apiKeyPrivate    = get_option('klyp_cf7tohs_api_key_private');
+        $this->keyMode          = $this->apiKeyPrivate != '' ? 'private' : 'apikey';
+        $this->portalId         = get_option('klyp_cf7tohs_portal_id');
+        $this->basePath         = get_option('klyp_cf7tohs_base_url');
     }
 
+     /**
+     * Generate a URL based on the configruation
+     * 
+     * @param string $url The base url
+     * 
+     * @return string The url with extra components appended
+     */
+    private function generateUrl($url)
+    {
+        if ($this->keyMode == 'apikey') {
+            if (str_contains($url, '?')) {
+                $url .= '&hapikey=' . $this->apiKey;
+            } else {
+                $url .= '?hapikey=' . $this->apiKey;
+            }
+        }
+        return $url;
+    }
+
+    /**
+     * Generate a Header array based on the configruation
+     * 
+     * @param string $contentType The content type to be passed through
+     * 
+     * @return array the array of headers to be used in the request
+     */
+    private function generateHeaders($contentType)
+    {
+        $headers['Content-Type'] = $contentType;
+
+        if ($this->keyMode == 'private') {
+            $headers['authorization'] = 'Bearer ' . $this->apiKeyPrivate;
+        }
+
+        return $headers;
+    }
+
+
+    /**
+     * Make a POST request
+     * 
+     * @param string $url The url to post to
+     * @param string $method The method to use (default POST)
+     * @param mixed $body The body of data to be posted
+     * @param string $contentType The specifed content type to be sent
+     * 
+     * @return array Returns an array of the response
+     */
     private function remotePost($url, $method = 'POST', $body, $contentType)
     {
+        $url = $this->generateUrl($url);
+        $headers = $this->generateHeaders($contentType);
+
         $response = wp_remote_post(
             $url,
-            array (
+            array(
                 'method'  => $method,
                 'body'    => wp_json_encode($body),
-                'headers' => array (
-                    'Content-Type' => $contentType
-                )
+                'headers' => $headers
             )
         );
 
         return $response;
     }
 
+    /**
+     * Make a GET request
+     * 
+     * @param string $url The url to post to
+     * @param string $contentType The specifed content type to be sent
+     * 
+     * @return array Returns an array of the response
+     */
     private function remoteGet($url, $contentType)
     {
+        $url = $this->generateUrl($url);
+        $headers = $this->generateHeaders($contentType);
+
         $response = wp_remote_get(
             $url,
-            array (
-                'headers' => array (
-                    'Content-Type'  => $contentType
-                )
+            array(
+                'headers' => $headers
             )
         );
 
         return $response;
     }
 
+    /**
+     * Parse the status from the response
+     * 
+     * @param mixed $response The response needing to be parsed
+     * 
+     * @return string The status of the reponse
+     */
     public function remoteStatus($response)
     {
         if (is_wp_error($response)) {
@@ -68,19 +152,29 @@ class klypHubspot
         return $status;
     }
 
+    /**
+     * Process the data of a submitted form and turn it into a format that HubSpot expects
+     * 
+     * @return array An array of user data
+     */
     private function processData()
     {
         for ($i = 0; $i <= count($this->cf7FormFields); $i++) {
             if ($this->cf7FormFields[$i] != '') {
-                $this->data[] = array (
+                $this->data[] = array(
                     'name'  => $this->hsFormFields[$i],
-                    'value' => (is_array ($this->postedData[$this->cf7FormFields[$i]]) ? implode(';', $this->postedData[$this->cf7FormFields[$i]]) : sanitize_text_field($this->postedData[$this->cf7FormFields[$i]]))
+                    'value' => (is_array($this->postedData[$this->cf7FormFields[$i]]) ? implode(';', $this->postedData[$this->cf7FormFields[$i]]) : sanitize_text_field($this->postedData[$this->cf7FormFields[$i]]))
                 );
             }
         }
         return $this->data;
     }
 
+    /**
+     * Packages the metadata for the current user session ready to be submitted to HubSpot
+     * 
+     * @return array An array containing metadata about the user session
+     */
     private function processContextData()
     {
         $hutk = isset($_COOKIE['hubspotutk']) ? sanitize_text_field($_COOKIE['hubspotutk']) : '';
@@ -93,7 +187,7 @@ class klypHubspot
 
         $currentUrl = get_permalink($objId);
         $pageName = get_the_title($objId);
-        $context = array ();
+        $context = array();
 
         if (! empty($hutk)) {
             $context['hutk'] = $hutk;
@@ -107,16 +201,21 @@ class klypHubspot
             $context['pageName'] = $pageName;
         }
 
-        $context = array (
+        $context = array(
             'context' => $context
         );
 
         return $context;
     }
 
+    /**
+     * Checks to see if a deal needs to be made from the form submission
+     * 
+     * @return array a bool condition and a message on whether to create a deal
+     */
     public function processDealbreaker()
     {
-        $return = array (
+        $return = array(
                 'success'   => true,
                 'message'   => '',
             );
@@ -128,7 +227,7 @@ class klypHubspot
 
         // if do not create deals is set
         if ($hsDealbreakerAllow === true) {
-            $return = array (
+            $return = array(
                 'success'   => false,
                 'message'   => 'Do not create deals is set'
             );
@@ -143,7 +242,7 @@ class klypHubspot
         }
 
         if ($this->dealbreaker == true) {
-            $return = array (
+            $return = array(
                 'success'   => false,
                 'message'   => 'A deal breaker condition is met'
             );
@@ -152,13 +251,21 @@ class klypHubspot
         return $return;
     }
 
+    /**
+     * Get a contact property from an email
+     * 
+     * @param string $email The email of the user
+     * @param string $property The Property being searched
+     * 
+     * @return string The property value
+     */
     public function getContactPropertyByEmail($email, $property)
     {
         if (! $email || ! $property) {
             return;
         }
 
-        $url        = $this->basePath . 'contacts/v1/contact/email/' . $email . '/profile?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'contacts/v1/contact/email/' . $email . '/profile';
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
@@ -179,13 +286,20 @@ class klypHubspot
         return $return;
     }
 
+    /**
+     * Get a contact property from an id
+     * 
+     * @param string $contactId The id of the user
+     * 
+     * @return string The user details
+     */
     public function getContactPropertyById($contactId)
     {
         if (! $contactId) {
             return;
         }
 
-        $url        = $this->basePath . 'contacts/v1/contact/vid/' . $contactId . '/profile?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'contacts/v1/contact/vid/' . $contactId . '/profile';
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
@@ -197,13 +311,20 @@ class klypHubspot
         return;
     }
 
+    /**
+     * Get the details of a deal from the deal id
+     * 
+     * @param string $dealId The id of the deal
+     * 
+     * @return mixed array|object The deal in an array format
+     */
     public function getDealDetails($dealId)
     {
         if (! $dealId) {
             return;
         }
 
-        $url        = $this->basePath . 'deals/v1/deal/' . $dealId . '?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'deals/v1/deal/' . $dealId;
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
@@ -215,9 +336,17 @@ class klypHubspot
         return;
     }
 
+    /**
+     * Get the fields of the of a form, with an option to specify a property
+     * 
+     * @param string $formId The Id of the HubSpot form
+     * @param string $property The specfied property to get the field value of
+     * 
+     * @return mixed array|string Returns an array of fields or the value (type) of just one
+     */
     public function getFormFields($formId, $property = null)
     {
-        $url        = $this->basePath . 'forms/v2/fields/' . $formId . '?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'marketing/v3/forms/' . $formId;
         $response   = $this->remoteGet($url, 'application/json');
         $status     = $this->remoteStatus($response);
 
@@ -228,47 +357,74 @@ class klypHubspot
                 $body = json_decode($body);
             }
 
+            $activeFields = [];
+            foreach ($body->fieldGroups as $key => $fieldGroups) {
+                foreach ($fieldGroups->fields as $key => $field) {
+                    array_push($activeFields, $field);
+                }
+            }
+
             if ($property) {
-                foreach ($body as $key => $value) {
+                foreach ($activeFields as $key => $value) {
                     if ($value->name == $property) {
                         return $value->type;
                     }
                 }
             } else {
-                return $body;
+                return $activeFields;
             }
         }
 
         exit();
     }
 
+    /**
+     * Update a deal with the given properties
+     * 
+     * @param array $properties An array of properties to update the deal with
+     * 
+     * @return array The array message showing the success of the request
+     */
     public function updateDeal($properties)
     {
         if (empty($properties)) {
             return;
         }
      
-        $url = $this->basePath . 'deals/v1/deal/' . $this->dealId . '?hapikey=' . $this->apiKey;
+        $url = $this->basePath . 'deals/v1/deal/' . $this->dealId;
         $response = $this->remotePost($url, 'PUT', $properties, 'application/json');
         
         return $response;
     }
 
+    /**
+     * Update a Contact with the given properties
+     * 
+     * @param string $vid The id of the user in HubSpot
+     * @param array $properties An array of properties to update the Contact with
+     * 
+     * @return array The array message showing the success of the request
+     */
     public function updateContact($vid, $properties)
     {
         if (empty($vid) || empty($properties)) {
             return;
         }
      
-        $url = $this->basePath . 'contacts/v1/contact/vid/' . $vid . '?hapikey=' . $this->apiKey;
+        $url = $this->basePath . 'contacts/v1/contact/vid/' . $vid;
         $response = $this->remotePost($url, 'POST', $properties, 'application/json');
         
         return $response;
     }
 
+    /**
+     * Create a Contact using the field values from the form and create a deal if needed
+     * 
+     * @return array The array message showing the success of the request
+     */
     public function createContact()
     {
-        $data       = array ('fields' => $this->processData());
+        $data       = array('fields' => $this->processData());
         $context    = $this->processContextData();
         $url        = 'https://api.hsforms.com/submissions/v3/integration/submit/' . $this->portalId . '/' . $this->hsFormId;
 
@@ -299,23 +455,23 @@ class klypHubspot
 
                 // if we get contact id
                 if ($hsContactId) {
-                    $deal = array (
-                        'properties'   => array (
-                            array (
+                    $deal = array(
+                        'properties'   => array(
+                            array(
                                 'name'  => 'dealstage',
                                 'value' => $stageId
                             ),
-                            array (
+                            array(
                                 'name'  => 'pipeline',
                                 'value' => $pipelineId
                             ),
-                            array (
+                            array(
                                 'name' => 'dealname',
                                 'value' => $cf7EmailField
                             )
                         ),
-                        'associations' => array (
-                            'associatedVids' => array ($hsContactId)
+                        'associations' => array(
+                            'associatedVids' => array($hsContactId)
                         ),
                     );
 
@@ -323,14 +479,14 @@ class klypHubspot
                     $this->dealId = $this->createDeal($deal);
                     
                     if (! empty($this->dealId)) {
-                        $properties = array ();
+                        $properties = array();
 
-                        $properties[] = array (
+                        $properties[] = array(
                             'name' => 'dealname',
                             'value' => $cf7EmailField . ' - ' . $this->dealId
                         );
 
-                        $properties = array ('properties' => $properties);
+                        $properties = array('properties' => $properties);
 
                         // update deal
                         $response = $this->updateDeal($properties);
@@ -338,7 +494,7 @@ class klypHubspot
                 }
             }
 
-            $return = array (
+            $return = array(
                 'success'   => true,
                 'message'   => '',
                 'dealId'    => $this->dealId
@@ -356,7 +512,7 @@ class klypHubspot
                 $errors = null;
             }
 
-            $return = array (
+            $return = array(
                 'success'   => false,
                 'message'   => $message,
                 'errors'    => $errors
@@ -366,6 +522,13 @@ class klypHubspot
         return $return;
     }
 
+    /**
+     * Create a deal using an array of properties
+     * 
+     * @param array $deal An array of properties to post to HubSpot
+     * 
+     * @return $string The Id of the deal
+     */
     private function createDeal($deal)
     {
         if (empty ($deal)) {
@@ -373,7 +536,7 @@ class klypHubspot
         }
 
         $id         = '';
-        $url        = $this->basePath . 'deals/v1/deal?hapikey=' . $this->apiKey;
+        $url        = $this->basePath . 'deals/v1/deal';
         $response   = $this->remotePost($url, 'POST', $deal, 'application/json');
         $status     = $this->remoteStatus($response);        
 
