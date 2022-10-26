@@ -37,6 +37,7 @@ function klypCF7ToHubspotRegisterSettings()
     register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_api_key_private');
     register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_portal_id');
     register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_base_url');
+    register_setting(KlypCF7TOHusbspot, 'klyp_cf7tohs_folder');
 }
 add_action('admin_init', 'klypCF7ToHubspotRegisterSettings');
 
@@ -53,6 +54,7 @@ function klypCF7ToHubspotSanitizeInput($input)
 
         foreach ($input as $key => $value) {
             $return[$key] = is_array($value) ? $value : sanitize_text_field($value);
+
         }
 
         return $return;
