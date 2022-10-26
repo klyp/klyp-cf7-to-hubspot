@@ -32,12 +32,11 @@ add_action('wp_footer','klypCF7RedirectOnMailsent');
  * @param array
  * @return array
  */
-
-function klypHsCf7CatchSubmission($result, $tags, $args)
+function klypHsCf7CatchSubmission($result, $tags)
 {
-
-    $submission         = WPCF7_Submission::get_instance();
-    $files              = $submission->uploaded_files();
+    if (! $result->is_valid()) {
+        return $result;
+    }
 
     // form options
     $cf7FormId          = intval(sanitize_key($_POST['_wpcf7']));
@@ -46,24 +45,11 @@ function klypHsCf7CatchSubmission($result, $tags, $args)
     $hsFormFields       = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-hs-map-fields', true);
 
     // start hubspot
-    $hubspot                = new klypHubspot();
+    $hubspot = new klypHubspot();
     $hubspot->cf7FormId     = $cf7FormId;
     $hubspot->cf7FormFields = $cf7FormFields;
     $hubspot->hsFormFields  = $hsFormFields;
-
-    if ($files) {
-        $hsFilesPath = $hubspot->hsFileUpload($files);
-        if ($hsFilesPath) {
-        // merge the uploaded file of hubspot path with 
-            $mergeFilesWithFormData = array();
-            $mergeFilesWithFormData = array_merge($_POST, $hsFilesPath);
-            $_POST                  = $mergeFilesWithFormData;
-            $hubspot->postedData    = $_POST; 
-        }
-    }
-
     $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
-    error_log(print_r($hubspot->postedData,true));
     $hubspot->apiKey        = get_option('klyp_cf7tohs_api_key');
     $hubspot->apiKeyPrivate = get_option('klyp_cf7tohs_api_key_private');
     $hubspot->portalId      = get_option('klyp_cf7tohs_portal_id');
@@ -103,7 +89,7 @@ function klypHsCf7CatchSubmission($result, $tags, $args)
 
     return $result;
 }
-add_filter('wpcf7_before_send_mail', 'klypHsCf7CatchSubmission', 10, 3);
+add_filter('wpcf7_validate', 'klypHsCf7CatchSubmission', 10, 2);
 
 /**
  * Get string between
