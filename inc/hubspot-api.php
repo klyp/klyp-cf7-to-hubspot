@@ -427,7 +427,6 @@ class klypHubspot
     {
        
         $data       = array('fields' => $this->processData());
-        error_log(print_r($data,true));
         $context    = $this->processContextData();
         $url        = 'https://api.hsforms.com/submissions/v3/integration/submit/' . $this->portalId . '/' . $this->hsFormId;
 
@@ -436,7 +435,6 @@ class klypHubspot
         }
 
         $response   = $this->remotePost($url, 'POST', $data, 'application/json');
-        error_log(print_r($response,true));
         $status     = $this->remoteStatus($response);
 
         if ($status == 200) {

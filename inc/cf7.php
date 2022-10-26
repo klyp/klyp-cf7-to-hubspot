@@ -54,16 +54,11 @@ function klypHsCf7CatchSubmission($result, $tags, $args)
     if ($files) {
         $hsFilesPath = $hubspot->hsFileUpload($files);
         if ($hsFilesPath) {
-        // merge the uploaded file of hubspot path with 
-            $mergeFilesWithFormData = array();
-            $mergeFilesWithFormData = array_merge($_POST, $hsFilesPath);
-            $_POST                  = $mergeFilesWithFormData;
-            $hubspot->postedData    = $_POST; 
+            $_POST = array_merge($_POST, $hsFilesPath); 
         }
     }
 
     $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
-    error_log(print_r($hubspot->postedData,true));
     $hubspot->apiKey        = get_option('klyp_cf7tohs_api_key');
     $hubspot->apiKeyPrivate = get_option('klyp_cf7tohs_api_key_private');
     $hubspot->portalId      = get_option('klyp_cf7tohs_portal_id');
