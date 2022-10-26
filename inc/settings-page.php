@@ -43,12 +43,6 @@ defined('ABSPATH') || die('Wordpress is not installed properly.');
                 <input type="text" name="klyp_cf7tohs_base_url" id="klyp_cf7tohs_base_url" class="large-text code" value="<?= esc_attr(get_option('klyp_cf7tohs_base_url')); ?>">
             </div>
 
-            <div id="klyp-cf7-to-hubspot-folder" class="klyp-cf7-to-hubspot-folder">
-                <h2 class="title">Hubspot Folder</h2>
-                <p>Click <a href="https://knowledge.hubspot.com/lists/how-do-i-create-a-folder-for-my-lists" target="_blank">here</a> on how to get your portal ID.</p>
-                <input type="text" name="klyp_cf7tohs_folder" id="klyp_cf7tohs_folder" class="large-text code" value="<?= esc_attr(get_option('klyp_cf7tohs_folder')); ?>">
-            </div>
-
             <?= submit_button('Save Settings'); ?>
         </form>
     </section>
