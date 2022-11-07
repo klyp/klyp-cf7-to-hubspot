@@ -111,8 +111,8 @@ function klypCf7HsGetStringBetween($string, $start, $end)
 {
     if (strpos($string, $start)) {
         $startCharCount = strpos($string, $start) + strlen($start);
-        $firstSubStr = substr($string, $startCharCount, strlen($string));
-        $endCharCount = strpos($firstSubStr, $end);
+        $firstSubStr    = substr($string, $startCharCount, strlen($string));
+        $endCharCount   = strpos($firstSubStr, $end);
         if ($endCharCount == 0) {
             $endCharCount = strlen($firstSubStr);
         }

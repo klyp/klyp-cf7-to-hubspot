@@ -39,12 +39,12 @@ class klypHubspot
 
     public function __construct()
     {
-        $this->apiKey           = get_option('klyp_cf7tohs_api_key');
-        $this->apiKeyPrivate    = get_option('klyp_cf7tohs_api_key_private');
-        $this->keyMode          = $this->apiKeyPrivate != '' ? 'private' : 'apikey';
-        $this->portalId         = get_option('klyp_cf7tohs_portal_id');
-        $this->basePath         = get_option('klyp_cf7tohs_base_url');
-        $this->folder           = get_option('klyp_cf7tohs_folder');
+        $this->apiKey        = get_option('klyp_cf7tohs_api_key');
+        $this->apiKeyPrivate = get_option('klyp_cf7tohs_api_key_private');
+        $this->keyMode       = $this->apiKeyPrivate != '' ? 'private' : 'apikey';
+        $this->portalId      = get_option('klyp_cf7tohs_portal_id');
+        $this->basePath      = get_option('klyp_cf7tohs_base_url');
+        $this->folder        = get_option('klyp_cf7tohs_folder');
     }
 
      /**
@@ -83,7 +83,6 @@ class klypHubspot
 
         return $headers;
     }
-
 
     /**
      * Make a POST request
@@ -178,17 +177,17 @@ class klypHubspot
      */
     private function processContextData()
     {
-        $hutk = isset($_COOKIE['hubspotutk']) ? sanitize_text_field($_COOKIE['hubspotutk']) : '';
+        $hutk     = isset($_COOKIE['hubspotutk']) ? sanitize_text_field($_COOKIE['hubspotutk']) : '';
         $referrer = wp_get_referer();
-        $objId = 0;
+        $objId    = 0;
 
         if ($referrer) {
             $objId = url_to_postid($referrer);
         }
 
         $currentUrl = get_permalink($objId);
-        $pageName = get_the_title($objId);
-        $context = array();
+        $pageName   = get_the_title($objId);
+        $context    = array();
 
         if (! empty($hutk)) {
             $context['hutk'] = $hutk;
@@ -412,7 +411,7 @@ class klypHubspot
             return;
         }
      
-        $url = $this->basePath . 'contacts/v1/contact/vid/' . $vid;
+        $url      = $this->basePath . 'contacts/v1/contact/vid/' . $vid;
         $response = $this->remotePost($url, 'POST', $properties, 'application/json');
         
         return $response;
@@ -468,12 +467,12 @@ class klypHubspot
                                 'value' => $pipelineId
                             ),
                             array(
-                                'name' => 'dealname',
+                                'name'  => 'dealname',
                                 'value' => $cf7EmailField
                             )
                         ),
                         'associations' => array(
-                            'associatedVids' => array($hsContactId)
+                        'associatedVids' => array($hsContactId)
                         ),
                     );
 
@@ -484,7 +483,7 @@ class klypHubspot
                         $properties = array();
 
                         $properties[] = array(
-                            'name' => 'dealname',
+                            'name'  => 'dealname',
                             'value' => $cf7EmailField . ' - ' . $this->dealId
                         );
 
@@ -508,10 +507,10 @@ class klypHubspot
 
             if ($response) {
                 $message = json_decode($response)->message ?: 'There is something wrong while processing your request. Please try again later.';
-                $errors = json_decode($response)->errors;
+                $errors  = json_decode($response)->errors;
             } else {
                 $message = 'There is something wrong while processing your request. Please try again later.';
-                $errors = null;
+                $errors  = null;
             }
 
             $return = array(

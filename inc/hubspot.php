@@ -85,7 +85,7 @@ function klypCf7HsAdditionalSettingsTab($post)
                                         echo '<option value="' . $cfField->name . '" ' . (esc_html(get_post_meta($post->id(), '_klyp-cf7-to-hubspot-cf7-email-field', true)) == $cfField->name ? 'selected="selected"' : '') . '>' . $cfField->name . '</option>';
                                     }
                                 }
-                echo '
+                            echo '
                             </select>
                         </label>
                     </td>
@@ -100,7 +100,7 @@ function klypCf7HsAdditionalSettingsTab($post)
                                 foreach ($hsFields as $key => $hsField) {
                                     echo '<option value="' . $hsField->name . '"' . ((get_post_meta($post->id(), '_klyp-cf7-to-hubspot-email-field', true) == $hsField->name) ? 'selected="selected"' : '') . '>' . $hsField->label . ' (' . $hsField->name . ')</option>';
                                 }
-                echo '
+                            echo '
                             </select>
                         </label>
                     </td>
@@ -186,7 +186,7 @@ function klypCf7HsAdditionalSettingsTab($post)
                             </tr>';
                     }
                 }
-        echo '
+            echo '
             </tbody>
             <tfoot id="klyp-cf7-to-hubspot-tfoot-map" style="display:none;">
                 <tr>
@@ -199,7 +199,7 @@ function klypCf7HsAdditionalSettingsTab($post)
                                     echo '<option value="' . $cfField->name . '">' . $cfField->name . '</option>';
                                 }
                             }
-        echo '
+            echo '
                         </select>
                     </td>
                     <td>
@@ -211,7 +211,7 @@ function klypCf7HsAdditionalSettingsTab($post)
                                     echo '<option value="' . $hsField->name . '">' . $hsField->label . ' (' . $hsField->name . ')</option>';
                                 }
                             }
-        echo '          </select>
+            echo '          </select>
                     </td>
                     <td align="right">
                         <button class="klyp-cf7-to-hubspot-cf-remove-map">x</button>
