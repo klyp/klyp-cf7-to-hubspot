@@ -32,10 +32,8 @@ add_action('wp_footer','klypCF7RedirectOnMailsent');
  * @param array
  * @return array
  */
-
 function klypHsCf7CatchSubmission($result, $tags, $args)
 {
-
     $submission         = WPCF7_Submission::get_instance();
     $files              = $submission->uploaded_files();
 
@@ -54,7 +52,11 @@ function klypHsCf7CatchSubmission($result, $tags, $args)
     if ($files) {
         $hsFilesPath = $hubspot->hsFileUpload($files);
         if ($hsFilesPath) {
-            $_POST = array_merge($_POST, $hsFilesPath); 
+        // merge the uploaded file of hubspot path with 
+            $mergeFilesWithFormData = array();
+            $mergeFilesWithFormData = array_merge($_POST, $hsFilesPath);
+            $_POST                  = $mergeFilesWithFormData;
+            $hubspot->postedData    = $_POST; 
         }
     }
 
@@ -98,6 +100,7 @@ function klypHsCf7CatchSubmission($result, $tags, $args)
 
     return $result;
 }
+
 add_filter('wpcf7_before_send_mail', 'klypHsCf7CatchSubmission', 10, 3);
 
 /**
