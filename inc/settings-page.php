@@ -48,6 +48,7 @@ defined('ABSPATH') || die('Wordpress is not installed properly.');
                 <p>Click <a href="https://knowledge.hubspot.com/lists/how-do-i-create-a-folder-for-my-lists" target="_blank">here</a> to create a folder for uploads. </p>
                 <input type="text" name="klyp_cf7tohs_folder" id="klyp_cf7tohs_folder" class="large-text code" value="<?= esc_attr(get_option('klyp_cf7tohs_folder')); ?>">
             </div>
+            
             <?= submit_button('Save Settings'); ?>
         </form>
     </section>

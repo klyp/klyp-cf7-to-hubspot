@@ -553,44 +553,54 @@ class klypHubspot
         return $id;
     }
 
+    /**
+     * Upload files on hubspot in folder
+     * 
+     * @param array $files An array of all files in the form
+     * 
+     * @return array The array having paths of all uploaded files on Hubspot
+     */
     public function hsFileUpload($files)
     {
-        if($this->folder!=null) {
-        $hsFilesPath = array();
+        if($this->folder != null) {
+            $hsFilesPath = array();
             foreach ($files as $filesIndex => $fileValue) 
             {
-                if (!$fileValue == false) {
+                if (! $fileValue == false) {
                     if (in_array($filesIndex, $this->cf7FormFields)) {
-                        $post_url = "https://api.hubapi.com/files/v3/files/";
-                        $ch       = curl_init(); 
+                        $postURL = "https://api.hubapi.com/files/v3/files/";
+                        $ch      = curl_init(); 
                         if ($ch) {
-                            $upload_file  = new CURLFile($fileValue[0], 'multipart/form-data', 'POST');
-                            $file_options = array(
+                            $uploadFile  = new CURLFile($fileValue[0], 'multipart/form-data', 'POST');
+                            $fileOptions = array(
                                 'access'                      => 'PUBLIC_INDEXABLE',
                                 'overwrite'                   => false,
                                 'duplicateValidationStrategy' => 'NONE',
                                 'duplicateValidationScope'    => 'EXACT_FOLDER'
                             );
-                            $post_data = array(
-                                'file'     => $upload_file,
-                                'options'  => json_encode($file_options),
+                            $PostData = array(
+                                'file'     => $uploadFile,
+                                'options'  => json_encode($fileOptions),
                                 'folderId' => $this->folder
                             );
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                             curl_setopt($ch, CURLOPT_POST, TRUE); 
-                            curl_setopt($ch, CURLOPT_URL, $post_url);
+                            curl_setopt($ch, CURLOPT_URL, $postURL);
 
-                            $authorization = 'Authorization: Bearer '. $this->apiKeyPrivate;
+                            $authorization = 'Authorization: Bearer ' . $this->apiKeyPrivate;
 
                             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data', $authorization));
-                            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, $PostData);
 
-                            $response                 = curl_exec($ch); //Log the response from HubSpot as needed.
-                            $status_code              = curl_getinfo($ch, CURLINFO_HTTP_CODE); //Log the response status code
+                            $response                 = curl_exec($ch);
+                            $statusCode               = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                             $hsFilesResponse          = json_decode($response, true);
                             $hsFilesPath[$filesIndex] = $hsFilesResponse['url'];
                             curl_close($ch);
                         }
+                    }
+                    else {
+                        break;
                     }
                 }
             }

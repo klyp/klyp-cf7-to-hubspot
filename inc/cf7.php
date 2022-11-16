@@ -49,11 +49,13 @@ function klypHsCf7CatchSubmission($result, $tags, $args)
     $hubspot->cf7FormFields = $cf7FormFields;
     $hubspot->hsFormFields  = $hsFormFields;
 
-    if ($files) {
+    if ($files) { 
         $hsFilesPath = $hubspot->hsFileUpload($files);
-        if ($hsFilesPath) {
+        if ($hsFilesPath) { 
             $mergeFilesWithFormData = array_merge($_POST, $hsFilesPath);
             $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($mergeFilesWithFormData);
+        } else {
+            $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
         }
     } else {
             $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
