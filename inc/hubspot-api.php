@@ -564,8 +564,7 @@ class klypHubspot
     {
         if($this->folder != null) {
             $hsFilesPath = array();
-            foreach ($files as $filesIndex => $fileValue) 
-            {
+            foreach ($files as $filesIndex => $fileValue) {
                 if (! $fileValue == false) {
                     if (in_array($filesIndex, $this->cf7FormFields)) {
                         $postURL = "https://api.hubapi.com/files/v3/files/";
@@ -598,9 +597,6 @@ class klypHubspot
                             $hsFilesPath[$filesIndex] = $hsFilesResponse['url'];
                             curl_close($ch);
                         }
-                    }
-                    else {
-                        break;
                     }
                 }
             }
