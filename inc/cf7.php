@@ -32,11 +32,10 @@ add_action('wp_footer','klypCF7RedirectOnMailsent');
  * @param array
  * @return array
  */
-function klypHsCf7CatchSubmission($result, $tags)
+function klypHsCf7CatchSubmission($result, $tags, $args)
 {
-    if (! $result->is_valid()) {
-        return $result;
-    }
+    $submission         = WPCF7_Submission::get_instance();
+    $files              = $submission->uploaded_files();
 
     // form options
     $cf7FormId          = intval(sanitize_key($_POST['_wpcf7']));
@@ -45,11 +44,23 @@ function klypHsCf7CatchSubmission($result, $tags)
     $hsFormFields       = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-hs-map-fields', true);
 
     // start hubspot
-    $hubspot = new klypHubspot();
+    $hubspot                = new klypHubspot();
     $hubspot->cf7FormId     = $cf7FormId;
     $hubspot->cf7FormFields = $cf7FormFields;
     $hubspot->hsFormFields  = $hsFormFields;
-    $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
+
+    if ($files) { 
+        $hsFilesPath = $hubspot->hsFileUpload($files);
+        if ($hsFilesPath) { 
+            $mergeFilesWithFormData = array_merge($_POST, $hsFilesPath);
+            $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($mergeFilesWithFormData);
+        } else {
+            $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
+        }
+    } else {
+            $hubspot->postedData    = klypCF7ToHubspotSanitizeInput($_POST);
+    }
+    
     $hubspot->apiKey        = get_option('klyp_cf7tohs_api_key');
     $hubspot->apiKeyPrivate = get_option('klyp_cf7tohs_api_key_private');
     $hubspot->portalId      = get_option('klyp_cf7tohs_portal_id');
@@ -89,7 +100,8 @@ function klypHsCf7CatchSubmission($result, $tags)
 
     return $result;
 }
-add_filter('wpcf7_validate', 'klypHsCf7CatchSubmission', 10, 2);
+
+add_filter('wpcf7_before_send_mail', 'klypHsCf7CatchSubmission', 10, 3);
 
 /**
  * Get string between
@@ -102,8 +114,8 @@ function klypCf7HsGetStringBetween($string, $start, $end)
 {
     if (strpos($string, $start)) {
         $startCharCount = strpos($string, $start) + strlen($start);
-        $firstSubStr = substr($string, $startCharCount, strlen($string));
-        $endCharCount = strpos($firstSubStr, $end);
+        $firstSubStr    = substr($string, $startCharCount, strlen($string));
+        $endCharCount   = strpos($firstSubStr, $end);
         if ($endCharCount == 0) {
             $endCharCount = strlen($firstSubStr);
         }

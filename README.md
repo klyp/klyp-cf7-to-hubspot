@@ -6,6 +6,10 @@ This plugin requires you to install Contact Form 7
 https://en-au.wordpress.org/plugins/contact-form-7/
 
 ### Changes
+
+#### v1.0.10 - 2022.12.6
+Added file upload support
+
 #### v1.0.9 - 2022.09.28
 Added Private api key option
 Updated url of forms to be private api key compatible

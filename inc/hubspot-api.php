@@ -39,11 +39,12 @@ class klypHubspot
 
     public function __construct()
     {
-        $this->apiKey           = get_option('klyp_cf7tohs_api_key');
-        $this->apiKeyPrivate    = get_option('klyp_cf7tohs_api_key_private');
-        $this->keyMode          = $this->apiKeyPrivate != '' ? 'private' : 'apikey';
-        $this->portalId         = get_option('klyp_cf7tohs_portal_id');
-        $this->basePath         = get_option('klyp_cf7tohs_base_url');
+        $this->apiKey        = get_option('klyp_cf7tohs_api_key');
+        $this->apiKeyPrivate = get_option('klyp_cf7tohs_api_key_private');
+        $this->keyMode       = $this->apiKeyPrivate != '' ? 'private' : 'apikey';
+        $this->portalId      = get_option('klyp_cf7tohs_portal_id');
+        $this->basePath      = get_option('klyp_cf7tohs_base_url');
+        $this->folder        = get_option('klyp_cf7tohs_folder');
     }
 
      /**
@@ -82,7 +83,6 @@ class klypHubspot
 
         return $headers;
     }
-
 
     /**
      * Make a POST request
@@ -167,6 +167,7 @@ class klypHubspot
                 );
             }
         }
+
         return $this->data;
     }
 
@@ -177,17 +178,17 @@ class klypHubspot
      */
     private function processContextData()
     {
-        $hutk = isset($_COOKIE['hubspotutk']) ? sanitize_text_field($_COOKIE['hubspotutk']) : '';
+        $hutk     = isset($_COOKIE['hubspotutk']) ? sanitize_text_field($_COOKIE['hubspotutk']) : '';
         $referrer = wp_get_referer();
-        $objId = 0;
+        $objId    = 0;
 
         if ($referrer) {
             $objId = url_to_postid($referrer);
         }
 
         $currentUrl = get_permalink($objId);
-        $pageName = get_the_title($objId);
-        $context = array();
+        $pageName   = get_the_title($objId);
+        $context    = array();
 
         if (! empty($hutk)) {
             $context['hutk'] = $hutk;
@@ -391,7 +392,7 @@ class klypHubspot
             return;
         }
      
-        $url = $this->basePath . 'deals/v1/deal/' . $this->dealId;
+        $url      = $this->basePath . 'deals/v1/deal/' . $this->dealId;
         $response = $this->remotePost($url, 'PUT', $properties, 'application/json');
         
         return $response;
@@ -411,7 +412,7 @@ class klypHubspot
             return;
         }
      
-        $url = $this->basePath . 'contacts/v1/contact/vid/' . $vid;
+        $url      = $this->basePath . 'contacts/v1/contact/vid/' . $vid;
         $response = $this->remotePost($url, 'POST', $properties, 'application/json');
         
         return $response;
@@ -434,7 +435,6 @@ class klypHubspot
 
         $response   = $this->remotePost($url, 'POST', $data, 'application/json');
         $status     = $this->remoteStatus($response);
-
         if ($status == 200) {
 
             $dealbreaker = $this->processDealbreaker();
@@ -466,11 +466,11 @@ class klypHubspot
                                 'value' => $pipelineId
                             ),
                             array(
-                                'name' => 'dealname',
+                                'name'  => 'dealname',
                                 'value' => $cf7EmailField
                             )
                         ),
-                        'associations' => array(
+                        'associations'   => array(
                             'associatedVids' => array($hsContactId)
                         ),
                     );
@@ -482,7 +482,7 @@ class klypHubspot
                         $properties = array();
 
                         $properties[] = array(
-                            'name' => 'dealname',
+                            'name'  => 'dealname',
                             'value' => $cf7EmailField . ' - ' . $this->dealId
                         );
 
@@ -506,10 +506,10 @@ class klypHubspot
 
             if ($response) {
                 $message = json_decode($response)->message ?: 'There is something wrong while processing your request. Please try again later.';
-                $errors = json_decode($response)->errors;
+                $errors  = json_decode($response)->errors;
             } else {
                 $message = 'There is something wrong while processing your request. Please try again later.';
-                $errors = null;
+                $errors  = null;
             }
 
             $return = array(
@@ -551,5 +551,57 @@ class klypHubspot
         }
 
         return $id;
+    }
+
+    /**
+     * Upload files on hubspot in folder
+     * 
+     * @param array $files An array of all files in the form
+     * 
+     * @return array The array having paths of all uploaded files on Hubspot
+     */
+    public function hsFileUpload($files)
+    {
+        if ($this->folder != null) {
+            $hsFilesPath = array();
+            // Loop over each file and check if they are part of the CF7 form fields before
+            // uploading them
+            foreach ($files as $filesIndex => $fileValue) {
+                if (! $fileValue == false && in_array($filesIndex, $this->cf7FormFields)) {
+                    $postURL = "https://api.hubapi.com/files/v3/files/";
+                    $ch      = curl_init(); 
+                    if ($ch) {
+                        $uploadFile  = new CURLFile($fileValue[0], 'multipart/form-data', end(explode('/', $fileValue[0])));
+                        $fileOptions = array(
+                            'access'                      => 'PUBLIC_INDEXABLE',
+                            'overwrite'                   => false,
+                            'duplicateValidationStrategy' => 'NONE',
+                            'duplicateValidationScope'    => 'EXACT_FOLDER'
+                        );
+                        $PostData = array(
+                            'file'     => $uploadFile,
+                            'options'  => json_encode($fileOptions),
+                            'folderId' => $this->folder
+                        );
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_POST, TRUE); 
+                        curl_setopt($ch, CURLOPT_URL, $postURL);
+
+                        $authorization = 'Authorization: Bearer ' . $this->apiKeyPrivate;
+
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data', $authorization));
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $PostData);
+
+                        $response                 = curl_exec($ch);
+                        $statusCode               = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                        $hsFilesResponse          = json_decode($response, true);
+                        $hsFilesPath[$filesIndex] = $hsFilesResponse['url'];
+                        curl_close($ch);
+                    }
+                }
+            }
+
+            return $hsFilesPath;
+        }    
     }
 }
