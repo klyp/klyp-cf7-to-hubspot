@@ -562,41 +562,41 @@ class klypHubspot
      */
     public function hsFileUpload($files)
     {
-        if($this->folder != null) {
+        if ($this->folder != null) {
             $hsFilesPath = array();
+            // Loop over each file and check if they are part of the CF7 form fields before
+            // uploading them
             foreach ($files as $filesIndex => $fileValue) {
-                if (! $fileValue == false) {
-                    if (in_array($filesIndex, $this->cf7FormFields)) {
-                        $postURL = "https://api.hubapi.com/files/v3/files/";
-                        $ch      = curl_init(); 
-                        if ($ch) {
-                            $uploadFile  = new CURLFile($fileValue[0], 'multipart/form-data', 'POST');
-                            $fileOptions = array(
-                                'access'                      => 'PUBLIC_INDEXABLE',
-                                'overwrite'                   => false,
-                                'duplicateValidationStrategy' => 'NONE',
-                                'duplicateValidationScope'    => 'EXACT_FOLDER'
-                            );
-                            $PostData = array(
-                                'file'     => $uploadFile,
-                                'options'  => json_encode($fileOptions),
-                                'folderId' => $this->folder
-                            );
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            curl_setopt($ch, CURLOPT_POST, TRUE); 
-                            curl_setopt($ch, CURLOPT_URL, $postURL);
+                if (! $fileValue == false && in_array($filesIndex, $this->cf7FormFields)) {
+                    $postURL = "https://api.hubapi.com/files/v3/files/";
+                    $ch      = curl_init(); 
+                    if ($ch) {
+                        $uploadFile  = new CURLFile($fileValue[0], 'multipart/form-data', end(explode('/', $fileValue[0])));
+                        $fileOptions = array(
+                            'access'                      => 'PUBLIC_INDEXABLE',
+                            'overwrite'                   => false,
+                            'duplicateValidationStrategy' => 'NONE',
+                            'duplicateValidationScope'    => 'EXACT_FOLDER'
+                        );
+                        $PostData = array(
+                            'file'     => $uploadFile,
+                            'options'  => json_encode($fileOptions),
+                            'folderId' => $this->folder
+                        );
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_POST, TRUE); 
+                        curl_setopt($ch, CURLOPT_URL, $postURL);
 
-                            $authorization = 'Authorization: Bearer ' . $this->apiKeyPrivate;
+                        $authorization = 'Authorization: Bearer ' . $this->apiKeyPrivate;
 
-                            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data', $authorization));
-                            curl_setopt($ch, CURLOPT_POSTFIELDS, $PostData);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data', $authorization));
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $PostData);
 
-                            $response                 = curl_exec($ch);
-                            $statusCode               = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                            $hsFilesResponse          = json_decode($response, true);
-                            $hsFilesPath[$filesIndex] = $hsFilesResponse['url'];
-                            curl_close($ch);
-                        }
+                        $response                 = curl_exec($ch);
+                        $statusCode               = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                        $hsFilesResponse          = json_decode($response, true);
+                        $hsFilesPath[$filesIndex] = $hsFilesResponse['url'];
+                        curl_close($ch);
                     }
                 }
             }
