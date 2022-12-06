@@ -15,11 +15,11 @@
       "email": "nyco@klyp.co",
       "role": "Developer"
     },
-	{
-		"name": "Joseph D'Astuto",
-		"email": "joseph.dastuto@klyp.co",
-		"role": "Developer"
-	}
+    {
+      "name": "Joseph D'Astuto",
+      "email": "joseph.dastuto@klyp.co",
+      "role": "Developer"
+    }
   ],
   "keywords": ["wordpress", "plugin", "contact form", "cf7", "contact form 7", "hubspot"],
   "support": {

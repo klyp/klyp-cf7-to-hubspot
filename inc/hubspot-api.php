@@ -471,7 +471,7 @@ class klypHubspot
                             )
                         ),
                         'associations'   => array(
-                        'associatedVids' => array($hsContactId)
+                            'associatedVids' => array($hsContactId)
                         ),
                     );
 
