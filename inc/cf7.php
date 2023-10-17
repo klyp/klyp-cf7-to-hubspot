@@ -32,10 +32,10 @@ add_action('wp_footer','klypCF7RedirectOnMailsent');
  * @param array
  * @return array
  */
-function klypHsCf7CatchSubmission($result, $tags)
+function klypHsCf7CatchSubmission($spam, $form)
 {
-    if (! $result->is_valid()) {
-        return $result;
+    if ($spam) {
+        return $spam;
     }
 
     // form options
@@ -57,13 +57,15 @@ function klypHsCf7CatchSubmission($result, $tags)
     $hubspot->cf7EmailField = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-cf7-email-field', true);
     $hubspot->hsEmailField  = get_post_meta($cf7FormId, '_klyp-cf7-to-hubspot-email-field', true);
 
+    // if we don't have hubspot setup
     if (empty($hubspot->hsFormId) && empty($hubspot->hsEmailField)) {
-        return $result;
+        return $spam;
     }
 
     // create contact
     $hubspotReturn = $hubspot->createContact();
 
+    // if there's an error
     if (isset($hubspotReturn['success']) && $hubspotReturn['success'] === false) {
         // validate errors
         if ($hubspotReturn['errors']) {
@@ -72,10 +74,18 @@ function klypHsCf7CatchSubmission($result, $tags)
                 $hsErrorKey = array_search($hsErrorField, $hsFormFields);
 
                 if ($hsErrorKey) {
-                    $result->invalidate($cf7FormFields[$hsErrorKey], $value->message);
+                    // lets return proper message
+                    add_filter('wpcf7_ajax_json_echo', function ($response, $result) use ($value) {
+                        $response['message'] = $value->message;
+                        return $response;
+                    }, 10, 2);
+
+                    // stop right here
+                    return true;
                 }
             }
-            return $result;
+            // we need to stop sending the form
+            return true;
         }
     }
 
@@ -87,9 +97,9 @@ function klypHsCf7CatchSubmission($result, $tags)
         }, 10, 2);
     }
 
-    return $result;
+    return $spam;
 }
-add_filter('wpcf7_validate', 'klypHsCf7CatchSubmission', 10, 2);
+add_filter('wpcf7_spam', 'klypHsCf7CatchSubmission', 99, 2);
 
 /**
  * Get string between
