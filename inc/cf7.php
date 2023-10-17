@@ -32,10 +32,10 @@ add_action('wp_footer','klypCF7RedirectOnMailsent');
  * @param array
  * @return array
  */
-function klypHsCf7CatchSubmission($result, $tags)
+function klypHsCf7CatchSubmission($spam, $tags)
 {
-    if (! $result->is_valid()) {
-        return $result;
+    if ($spam) {
+        return $spam;
     }
 
     // form options
@@ -89,7 +89,7 @@ function klypHsCf7CatchSubmission($result, $tags)
 
     return $result;
 }
-add_filter('wpcf7_validate', 'klypHsCf7CatchSubmission', 10, 2);
+add_filter('wpcf7_spam', 'klypHsCf7CatchSubmission', 99, 2);
 
 /**
  * Get string between
