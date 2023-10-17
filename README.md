@@ -6,6 +6,11 @@ This plugin requires you to install Contact Form 7
 https://en-au.wordpress.org/plugins/contact-form-7/
 
 ### Changes
+#### v1.0.10 - 2023.10.17
+Updated the way we push to hubspot
+Check if the submission is spam first
+Added custom error message from hubspot
+
 #### v1.0.9 - 2022.09.28
 Added Private api key option
 Updated url of forms to be private api key compatible
