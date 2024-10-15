@@ -2,7 +2,7 @@
 Contributors: klyp
 Tags: contact, form, cf7, hubspot
 Requires at least: 5.2
-Tested up to: 6.3.2
+Tested up to: 6.6.2
 Requires PHP: 7.0
 Stable tag: 1.0.11
 License: GPL2+
