@@ -6,6 +6,10 @@ This plugin requires you to install Contact Form 7
 https://en-au.wordpress.org/plugins/contact-form-7/
 
 ### Changes
+#### v1.0.11 - 2024.10.14
+Moved the method parameter location on remorePost to be last
+Modified all invocations of the function to reflect the new order
+
 #### v1.0.10 - 2023.10.17
 Updated the way we push to hubspot
 Check if the submission is spam first

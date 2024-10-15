@@ -24,6 +24,7 @@ class klypHubspot
     private $dealbreaker = false;
     public $apiKey;
     public $apiKeyPrivate;
+    private $keyMode;
     public $portalId;
     public $basePath;
 
@@ -88,13 +89,13 @@ class klypHubspot
      * Make a POST request
      * 
      * @param string $url The url to post to
-     * @param string $method The method to use (default POST)
      * @param mixed $body The body of data to be posted
      * @param string $contentType The specifed content type to be sent
+     * @param string $method The method to use (default POST)
      * 
      * @return array Returns an array of the response
      */
-    private function remotePost($url, $method = 'POST', $body, $contentType)
+    private function remotePost($url, $body, $contentType, $method = 'POST')
     {
         $url = $this->generateUrl($url);
         $headers = $this->generateHeaders($contentType);
@@ -392,7 +393,7 @@ class klypHubspot
         }
      
         $url = $this->basePath . 'deals/v1/deal/' . $this->dealId;
-        $response = $this->remotePost($url, 'PUT', $properties, 'application/json');
+        $response = $this->remotePost($url, $properties, 'application/json', 'PUT');
         
         return $response;
     }
@@ -412,7 +413,7 @@ class klypHubspot
         }
      
         $url = $this->basePath . 'contacts/v1/contact/vid/' . $vid;
-        $response = $this->remotePost($url, 'POST', $properties, 'application/json');
+        $response = $this->remotePost($url, $properties, 'application/json', 'POST');
         
         return $response;
     }
@@ -432,7 +433,7 @@ class klypHubspot
             $data = array_merge($data, $context);
         }
 
-        $response   = $this->remotePost($url, 'POST', $data, 'application/json');
+        $response   = $this->remotePost($url, $data, 'application/json', 'POST');
         $status     = $this->remoteStatus($response);
 
         if ($status == 200) {
@@ -537,7 +538,7 @@ class klypHubspot
 
         $id         = '';
         $url        = $this->basePath . 'deals/v1/deal';
-        $response   = $this->remotePost($url, 'POST', $deal, 'application/json');
+        $response   = $this->remotePost($url, $deal, 'application/json', 'POST');
         $status     = $this->remoteStatus($response);        
 
         if ($status === 200) {

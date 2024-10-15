@@ -2,9 +2,9 @@
 Contributors: klyp
 Tags: contact, form, cf7, hubspot
 Requires at least: 5.2
-Tested up to: 6.3.2
+Tested up to: 6.6.2
 Requires PHP: 7.0
-Stable tag: 1.0.10
+Stable tag: 1.0.11
 License: GPL2+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -14,6 +14,10 @@ Klyp CF7 to Hubspot
 This plugin allows you to map CF7 fields to Hubspot form fields
 
 == Changelog ==
+v1.0.11 - 2024.10.14
+Moved the method parameter location on remorePost to be last
+Modified all invocations of the function to reflect the new order
+
 v1.0.10 - 2023.10.17
 Updated the way we push to hubspot
 Check if the submission is spam first
