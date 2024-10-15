@@ -24,6 +24,7 @@ class klypHubspot
     private $dealbreaker = false;
     public $apiKey;
     public $apiKeyPrivate;
+    private $keyMode;
     public $portalId;
     public $basePath;
 
