@@ -1,7 +1,7 @@
 {
   "name": "klyp/klyp-cf7-to-hubspot",
   "type": "wordpress-plugin",
-  "description": "This plugin allows you to map CF7 fields to Hubspot form fields.",
+  "description": "Map Contact Form 7 fields to HubSpot form fields and optionally create an associated deal.",
   "license": "GPL-2.0-only",
   "homepage": "https://github.com/klyp/klyp-cf7-to-hubspot",
   "authors": [
@@ -21,13 +21,23 @@
     "issues": "https://github.com/klyp/klyp-cf7-to-hubspot/issues"
   },
   "require": {
-    "php": ">=7.1.0"
+    "php": ">=8.0"
   },
   "suggest": {
     "composer/installers": "~1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7",
-    "wpackagist-plugin/contact-form-7": "*"
+    "squizlabs/php_codesniffer": "^3.10",
+    "wp-coding-standards/wpcs": "^3.1",
+    "wpackagist-plugin/contact-form-7": ">=5.8"
+  },
+  "scripts": {
+    "lint": "find . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
