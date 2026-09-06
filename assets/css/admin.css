@@ -1,0 +1,447 @@
+/**
+ * Admin styles for Klyp CF7 to HubSpot.
+ *
+ * Kept close to the WordPress admin palette so the screen sits alongside core
+ * settings pages rather than competing with them.
+ */
+
+.klyp-cf7hs__lede {
+  max-width: 46em;
+  margin: 0.4em 0 1.2em;
+  color: #50575E;
+}
+
+/* Connection status banner
+   ------------------------------------------------------------------------- */
+
+.klyp-cf7hs-status {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin: 0 0 1.4em;
+  padding: 0.85em 1em;
+  background: #FFFFFF;
+  border: 1px solid #C3C4C7;
+  border-left-width: 4px;
+  border-radius: 2px;
+}
+
+.klyp-cf7hs-status__dot {
+  flex: 0 0 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #DBA617;
+}
+
+.klyp-cf7hs-status__text {
+  flex: 1 1 auto;
+}
+
+.klyp-cf7hs-status--checking { border-left-color: #DBA617; }
+.klyp-cf7hs-status--unconfigured { border-left-color: #DBA617; }
+
+.klyp-cf7hs-status--connected { border-left-color: #00A32A; }
+.klyp-cf7hs-status--connected .klyp-cf7hs-status__dot { background: #00A32A; }
+
+.klyp-cf7hs-status--error { border-left-color: #D63638; }
+.klyp-cf7hs-status--error .klyp-cf7hs-status__dot { background: #D63638; }
+
+.klyp-cf7hs-status--checking .klyp-cf7hs-status__dot {
+  animation: klypCf7hsPulse 1.1s ease-in-out infinite;
+}
+
+@keyframes klypCf7hsPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .klyp-cf7hs-status--checking .klyp-cf7hs-status__dot { animation: none; }
+}
+
+/* Two-column layout
+   ------------------------------------------------------------------------- */
+
+.klyp-cf7hs__columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.klyp-cf7hs__main {
+  flex: 1 1 520px;
+  min-width: 0;
+}
+
+.klyp-cf7hs__side {
+  flex: 0 1 320px;
+  min-width: 0;
+}
+
+.klyp-cf7hs-card.card {
+  max-width: none;
+  margin: 0 0 20px;
+  padding: 0.6em 1.4em 1.2em;
+}
+
+.klyp-cf7hs-card .form-table th {
+  width: 150px;
+}
+
+/* Credentials
+   ------------------------------------------------------------------------- */
+
+.klyp-cf7hs__secret {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
+.klyp-cf7hs-token-stored {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
+.klyp-cf7hs-token-stored .dashicons {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  color: #50575E;
+}
+
+.klyp-cf7hs__advanced {
+  margin: 0 0 0.5em;
+  padding-top: 0.5em;
+  border-top: 1px solid #F0F0F1;
+}
+
+.klyp-cf7hs__advanced > summary {
+  padding: 0.35em 0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Connected forms table
+   ------------------------------------------------------------------------- */
+
+.klyp-cf7hs-table__num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.klyp-cf7hs-warn {
+  color: #B32D2E;
+  white-space: nowrap;
+}
+
+.klyp-cf7hs-warn .dashicons {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  vertical-align: text-bottom;
+}
+
+.klyp-cf7hs-guid {
+  font-size: 11px;
+  word-break: break-all;
+}
+
+/* Sidebar form list
+   ------------------------------------------------------------------------- */
+
+.klyp-cf7hs-muted {
+  color: #646970;
+}
+
+.klyp-cf7hs-form-list {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.klyp-cf7hs-form-list ul {
+  margin: 0;
+}
+
+.klyp-cf7hs-form-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  margin: 0;
+  padding: 0.5em 0;
+  border-bottom: 1px solid #F0F0F1;
+}
+
+.klyp-cf7hs-form-list li:last-child {
+  border-bottom: 0;
+}
+
+.klyp-cf7hs-form-list__name {
+  display: block;
+  font-weight: 600;
+}
+
+.klyp-cf7hs-form-list__id {
+  font-size: 11px;
+  color: #646970;
+  word-break: break-all;
+}
+
+.klyp-cf7hs-scopes {
+  margin: 0 0 1em;
+}
+
+.klyp-cf7hs-scopes li {
+  margin-bottom: 0.6em;
+}
+
+.klyp-cf7hs-scopes code {
+  display: block;
+  font-size: 11px;
+}
+
+/* Contact Form 7 editor panel
+   ------------------------------------------------------------------------- */
+
+.klyp-cf7hs-panel {
+  max-width: 64rem;
+}
+
+.klyp-cf7hs-panel > h2 {
+  margin-bottom: 1rem;
+}
+
+/* Each numbered step is a card. `float` makes the legend behave like a block
+   heading inside the box rather than sitting in the border line. */
+.klyp-cf7hs-section {
+  margin: 0 0 1.25rem;
+  padding: 0 1.25rem 1rem;
+  border: 1px solid #DCDCDE;
+  border-radius: 4px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.klyp-cf7hs-section > legend {
+  float: left;
+  width: 100%;
+  margin: 0 0 0.25rem;
+  padding: 0.85rem 0 0.6rem;
+  border-bottom: 1px solid #F0F0F1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1D2327;
+}
+
+.klyp-cf7hs-section > legend + * {
+  clear: both;
+}
+
+.klyp-cf7hs-section > .description {
+  margin: 0.75rem 0 0.5rem;
+}
+
+.klyp-cf7hs-subheading {
+  margin: 1.25rem 0 0.25rem;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Labels were wrapping onto three lines at CF7's default ~110px column.
+   Contact Form 7 sizes that column with an `#contact-form-editor …` selector,
+   so these carry the same ID to out-rank it — a class-only rule loses. */
+#contact-form-editor .klyp-cf7hs-panel .form-table {
+  margin-top: 0;
+}
+
+#contact-form-editor .klyp-cf7hs-panel .form-table th {
+  width: 12.5rem;
+  padding-left: 0;
+  white-space: normal;
+}
+
+#contact-form-editor .klyp-cf7hs-panel .form-table td {
+  padding-right: 0;
+}
+
+/* One width for every control in a settings row, so pairs read as pairs. */
+#contact-form-editor .klyp-cf7hs-panel .form-table input[type="text"],
+#contact-form-editor .klyp-cf7hs-panel .form-table input[type="url"],
+#contact-form-editor .klyp-cf7hs-panel .form-table .klyp-cf7hs-select {
+  width: 100%;
+  max-width: 40rem;
+}
+
+#contact-form-editor .klyp-cf7hs-panel .form-table .description {
+  margin-top: 0.4rem;
+}
+
+/* Inline load status under the form ID */
+
+.klyp-cf7hs-inline-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+  margin: 0.6rem 0 0;
+  font-size: 13px;
+}
+
+.klyp-cf7hs-inline-status__dot {
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8C8F94;
+}
+
+.klyp-cf7hs-inline-status--ok { color: #007017; }
+.klyp-cf7hs-inline-status--ok .klyp-cf7hs-inline-status__dot { background: #00A32A; }
+
+.klyp-cf7hs-inline-status--error { color: #B32D2E; }
+.klyp-cf7hs-inline-status--error .klyp-cf7hs-inline-status__dot { background: #D63638; }
+
+/* Deal toggle */
+
+.klyp-cf7hs-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.75rem 0;
+}
+
+.klyp-cf7hs-toggle .description {
+  margin-left: 1.55rem;
+}
+
+.klyp-cf7hs-deal-options {
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid #F0F0F1;
+}
+
+/* Repeaters */
+
+.klyp-cf7hs-repeater {
+  margin: 0.5rem 0 0.25rem;
+}
+
+.klyp-cf7hs-repeater__table {
+  margin-bottom: 0.75rem;
+  table-layout: fixed;
+}
+
+.klyp-cf7hs-repeater__table th,
+.klyp-cf7hs-repeater__table td {
+  vertical-align: middle;
+}
+
+/* Both selects fill their cell, so the pair is visibly balanced. */
+.klyp-cf7hs-repeater__table .klyp-cf7hs-select,
+.klyp-cf7hs-repeater__table input[type="text"] {
+  width: 100%;
+  max-width: none;
+}
+
+.klyp-cf7hs-repeater__arrow {
+  width: 2rem;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+  color: #8C8F94;
+}
+
+.klyp-cf7hs-repeater__actions {
+  width: 2.75rem;
+  text-align: right;
+}
+
+.klyp-cf7hs-repeater__empty {
+  color: #646970;
+  font-style: italic;
+}
+
+/* Belt and braces with the `hidden` attribute: the row template must never paint. */
+.klyp-cf7hs-repeater__template {
+  display: none !important;
+}
+
+.klyp-cf7hs-repeater__row--new {
+  animation: klypCf7hsFlash 1.2s ease-out;
+}
+
+@keyframes klypCf7hsFlash {
+  from { background-color: #E6F4EA; }
+  to { background-color: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .klyp-cf7hs-repeater__row--new { animation: none; }
+}
+
+.klyp-cf7hs-repeater__remove {
+  color: #B32D2E;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.klyp-cf7hs-repeater__remove:hover,
+.klyp-cf7hs-repeater__remove:focus {
+  color: #8A2424;
+}
+
+/* Buttons are left to WordPress core: `.wp-core-ui .button .dashicons` already
+   sizes and vertically aligns an icon inside a button. Overriding it (as an
+   earlier revision did with inline-flex and a 16px icon) is what made the icon
+   sit below the text. */
+.klyp-cf7hs-repeater__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+.klyp-cf7hs-repeater__result {
+  color: #007017;
+  font-size: 13px;
+}
+
+.klyp-cf7hs-repeater__result.is-empty {
+  color: #646970;
+}
+
+.klyp-cf7hs-repeater__result:empty {
+  display: none;
+}
+
+@media screen and (max-width: 782px) {
+  #contact-form-editor .klyp-cf7hs-panel .form-table th {
+    width: auto;
+  }
+
+  .klyp-cf7hs-repeater__arrow {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 782px) {
+  .klyp-cf7hs__side {
+    flex-basis: 100%;
+  }
+
+  .klyp-cf7hs-card .form-table th {
+    width: auto;
+  }
+}
+
+/* Used by the clipboard fallback, which needs a real focusable field offscreen. */
+.klyp-cf7hs-offscreen {
+  position: fixed;
+  top: -1000px;
+  opacity: 0;
+}
